@@ -269,3 +269,14 @@ rules:
       function: pattern
       functionOptions:
         notMatch: "\\.$"
+
+  oneof-anyof-inline-schema-should-contain-title:
+    description: 'When oneOf/anyOf has inline schema then Title should be defined'
+    message: "{{description}}"
+    severity: error
+    format: ["oas3"]
+    resolved: false
+    given:
+      - $.paths[*][*][requestBody][*][*][*][properties][*][oneOf][*].title
+    then:
+

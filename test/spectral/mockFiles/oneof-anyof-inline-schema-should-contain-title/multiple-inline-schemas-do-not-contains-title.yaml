@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  title: Messaging Notification API
+  version: 0.0.1
+paths:
+  /notification/v1/create_emails:
+    post:
+      description: Create an email notification to be sent
+      operationId: Notification_create_emails
+      parameters:
+        - name: callback
+          in: query
+          description: Callback URL that ther service can report email delivery statuses.
+          schema:
+            type: string
+            format: uri
+            example: "https://mydomain.com/callback"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - from
+                - recipients
+                - template_name
+              properties:
+                recipients:
+                  oneOf:
+                    - type: object
+                      required:
+                        - emails
+                      properties:
+                        emails:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - email
+                            properties:
+                              email:
+                                type: string
+                                format: email
+                              first_name:
+                                type: string
+                                description: First name of the owner of the email address.
+                                pattern: "^[^,;]+$"
+                              last_name:
+                                type: string
+                                description: Last name of the owner of the email address.
+                                pattern: "^[^,;]+$"
+                            additionalProperties: true
+                            example:
+                              email: test@company.com
+                              first_name: John
+                              last_name: Doe
+                    - type: object
+                      required:
+                        - users
+                      properties:
+                        users:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - iam_id
+                            properties:
+                              iam_id:
+                                type: string
+                                description: IAM ID of user on IBM Cloud
+                            additionalProperties: true
+                            example:
+                              iam_id: IBMid-1234567ABC
+                              language: en
+                    - type: object
+                      required:
+                        - accounts
+                      properties:
+                        accounts:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - account_id
+                            properties:
+                              account_id:
+                                type: string
+                                description: IBM Cloud account ID
+                            additionalProperties: true
+                            example:
+                              account_id: abcdefghil123456
+                              subscription_override: allowed
+      responses:
+        "202":
+          description: Request accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message about request acceptance.
+
+  /notification/v1/create_emails2:
+    post:
+      description: Create an email notification to be sent
+      operationId: Notification_create_emails
+      parameters:
+        - name: callback
+          in: query
+          description: Callback URL that ther service can report email delivery statuses.
+          schema:
+            type: string
+            format: uri
+            example: "https://mydomain.com/callback"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - from
+                - recipients
+                - template_name
+              properties:
+                recipients:
+                  oneOf:
+                    - type: object
+                      required:
+                        - emails
+                      properties:
+                        emails:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - email
+                            properties:
+                              email:
+                                type: string
+                                format: email
+                              first_name:
+                                type: string
+                                description: First name of the owner of the email address.
+                                pattern: "^[^,;]+$"
+                              last_name:
+                                type: string
+                                description: Last name of the owner of the email address.
+                                pattern: "^[^,;]+$"
+                            additionalProperties: true
+                            example:
+                              email: test@company.com
+                              first_name: John
+                              last_name: Doe
+                    - type: object
+                      required:
+                        - users
+                      properties:
+                        users:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - iam_id
+                            properties:
+                              iam_id:
+                                type: string
+                                description: IAM ID of user on IBM Cloud
+                            additionalProperties: true
+                            example:
+                              iam_id: IBMid-1234567ABC
+                              language: en
+                    - type: object
+                      required:
+                        - accounts
+                      properties:
+                        accounts:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - account_id
+                            properties:
+                              account_id:
+                                type: string
+                                description: IBM Cloud account ID
+                            additionalProperties: true
+                            example:
+                              account_id: abcdefghil123456
+                              subscription_override: allowed
+      responses:
+        "202":
+          description: Request accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message about request acceptance.

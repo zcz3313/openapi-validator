@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  title: Mock API
+  version: 0.0.1
+paths:
+  /notification/v1/create_emails:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - from
+                - recipients
+                - template_name
+              properties:
+                recipients:
+                  oneOf:
+                    - type: object
+                      title: Subscription
+                      required:
+                        - emails
+                      properties:
+                        emails:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - email
+                            properties:
+                              email:
+                                type: string
+                                format: email
+                              first_name:
+                                type: string
+                                description: First name of the owner of the email address.
+                                pattern: "^[^,;]+$"
+                              last_name:
+                                type: string
+                                description: Last name of the owner of the email address.
+                                pattern: "^[^,;]+$"
+      responses:
+        "202":
+          description: Request accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - from
+                  - recipients
+                  - template_name
+                properties:
+                  recipients:
+                    oneOf:
+                      - type: object
+                        title: Subscription
+                        required:
+                          - emails
+                        properties:
+                          emails:
+                            type: array
+                            items:
+                              type: object
+                              required:
+                                - email
+                              properties:
+                                email:
+                                  type: string
+                                  format: email
+                                first_name:
+                                  type: string
+                                  description: First name of the owner of the email address.
+                                  pattern: "^[^,;]+$"
+                                last_name:
+                                  type: string
+                                  description: Last name of the owner of the email address.
+                                  pattern: "^[^,;]+$"
