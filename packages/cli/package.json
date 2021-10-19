@@ -1,0 +1,39 @@
+{
+  "name": "@openapi-validator/cli",
+  "version": "1.0.0",
+  "description": "Openapi validator",
+  "author": "András Csányi <andras.csanyi@pm.me>",
+  "homepage": "https://github.com/IBM/openapi-validator#readme",
+  "license": "ISC",
+  "main": "src/cli.js",
+  "directories": {
+    "lib": "src",
+    "test": "test"
+  },
+  "files": [
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IBM/openapi-validator.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "lint": "eslint --cache --quiet --ext '.js' src test",
+    "lint-fix": "eslint --fix --ext '.js' src test"
+  },
+  "bugs": {
+    "url": "https://github.com/IBM/openapi-validator/issues"
+  },
+  "dependencies": {
+    "@stoplight/spectral-core": "^1.6.0",
+    "babel-eslint": "^10.1.0",
+    "commander": "^8.2.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "@acsanyi-test/simple-rule",
+  "version": "1.0.0",
+  "description": "Just a simple rule",
+  "author": "András Csányi <andras.csanyi@pm.me>",
+  "homepage": "https://github.com/Andras-Csanyi/simple-rule#readme",
+  "license": "ISC",
+  "main": "lib/init.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andras-Csanyi/simple-rule.git"
+  },
+  "scripts": {
+    "test": "jest test/",
+    "jest": "jest",
+    "report-coverage": "codecov",
+    "lint": "eslint --cache --quiet --ext '.js' src test",
+    "lint-fix": "eslint --fix --ext '.js' src test"
+  },
+  "bugs": {
+    "url": "https://github.com/Andras-Csanyi/simple-rule/issues"
+  },
+  "dependencies": {
+    "@stoplight/spectral-core": "^1.6.0",
+    "@stoplight/spectral-functions": "^1.3.0",
+    "@stoplight/spectral-parsers": "^1.0.1",
+    "@stoplight/spectral-rulesets": "^1.2.6",
+    "babel-eslint": "^10.1.0",
+    "jest": "^27.3.1"
+  }
+}
