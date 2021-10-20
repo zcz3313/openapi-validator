@@ -1,6 +1,6 @@
-import { Spectral } from '@stoplight/spectral-core';
+const Spectral = require('@stoplight/spectral-core');
 
-export class SpectralBuilder {
+class SpectralBuilder {
   
   addRuleset(ruleset) {
     this.ruleset = ruleset;
@@ -16,3 +16,5 @@ export class SpectralBuilder {
     
   }
 }
+
+module.imports = SpectralBuilder

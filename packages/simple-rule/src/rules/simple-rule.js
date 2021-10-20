@@ -1,11 +1,12 @@
-import { oasRuleset } from '@stoplight/spectral-rulesets';
-import { truthy } from '@stoplight/spectral-functions';
+const spectralRulesets = require('@stoplight/spectral-rulesets');
+const spectralFunctions = require('@stoplight/spectral-functions');
+const {oas3} = require('@stoplight/spectral-formats');
 
-export default {
-  formats: [oas3],
-  extends: [oasRuleset],
-  rules: {
-    "simple-rule":{
+class Ruleset {
+  formats = [oas3];
+  extends = [spectralRulesets.oas];
+  rules = {
+    "simple-rule": {
       given: "$.info",
       then: {
         function: () => {
@@ -13,5 +14,7 @@ export default {
         }
       }
     }
-  }
+  };
 }
+
+module.exports = Ruleset;

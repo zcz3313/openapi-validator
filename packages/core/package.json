@@ -27,6 +27,7 @@
     "url": "https://github.com/IBM/openapi-validator/issues"
   },
   "dependencies": {
-    "@stoplight/spectral-core": "^1.6.0"
+    "@stoplight/spectral-core": "^1.6.0",
+    "nimma": "^0.1.3"
   }
 }
