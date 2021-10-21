@@ -1,5 +1,5 @@
 {
-  "name": "@openapi-validator/core",
+  "name": "@acsanyi-test/openapi-validator-core",
   "version": "1.0.0",
   "description": "> TODO: description",
   "author": "András Csányi <andras.csanyi@pm.me>",
@@ -21,13 +21,32 @@
     "url": "git+https://github.com/IBM/openapi-validator.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "jest __tests__/",
+    "jest": "jest",
+    "report-coverage": "codecov",
+    "lint": "eslint --cache --quiet --ext '.js' src __tests__",
+    "lint-fix": "eslint --fix --ext '.js' src __tests__"
   },
   "bugs": {
     "url": "https://github.com/IBM/openapi-validator/issues"
   },
   "dependencies": {
     "@stoplight/spectral-core": "^1.6.0",
-    "nimma": "^0.1.3"
+    "@stoplight/spectral-formats": "^1.0.1",
+    "@stoplight/spectral-functions": "^1.3.0",
+    "@stoplight/spectral-parsers": "^1.0.1",
+    "@stoplight/spectral-ref-resolver": "^1.0.1",
+    "@stoplight/spectral-rulesets": "^1.2.6",
+    "@stoplight/spectral-runtime": "^1.1.0",
+    "babel-eslint": "^10.1.0",
+    "jest": "^27.3.1"
+  },
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^nimma/fallbacks$": "<rootDir>/node_modules/nimma/dist/cjs/fallbacks/index.js",
+      "^nimma/legacy$": "<rootDir>/node_modules/nimma/dist/legacy/cjs/index.js"
+    }
   }
 }

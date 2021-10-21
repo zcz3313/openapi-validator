@@ -1,6 +1,9 @@
-const Spectral = require('@stoplight/spectral-core');
+const { Spectral } = require('@stoplight/spectral-core');
 
 class SpectralBuilder {
+  
+  constructor() {
+  }
   
   addRuleset(ruleset) {
     this.ruleset = ruleset;
@@ -10,11 +13,11 @@ class SpectralBuilder {
   build() {
     // input validation
     
-    const spectral = new Spectral();
+    let spectral = new Spectral();
     spectral.setRuleset(this.ruleset);
     return spectral;
     
   }
 }
 
-module.imports = SpectralBuilder
+module.exports = SpectralBuilder;
