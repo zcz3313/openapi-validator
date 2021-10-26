@@ -1,17 +1,17 @@
 {
   "name": "@acsanyi-test/openapi-validator-core",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "> TODO: description",
   "author": "András Csányi <andras.csanyi@pm.me>",
   "homepage": "https://github.com/IBM/openapi-validator#readme",
   "license": "ISC",
-  "main": "lib/core.js",
+  "main": "lib/openapi-validator.js",
   "directories": {
-    "lib": "lib",
+    "lib": "src",
     "test": "__tests__"
   },
   "files": [
-    "lib"
+    "src"
   ],
   "publishConfig": {
     "access": "public"
@@ -21,6 +21,7 @@
     "url": "git+https://github.com/IBM/openapi-validator.git"
   },
   "scripts": {
+    "build": "tsc && cp package.json dist/",
     "test": "jest __tests__/",
     "jest": "jest",
     "report-coverage": "codecov",
@@ -38,8 +39,13 @@
     "@stoplight/spectral-ref-resolver": "^1.0.1",
     "@stoplight/spectral-rulesets": "^1.2.6",
     "@stoplight/spectral-runtime": "^1.1.0",
+    "@types/node": "^12.0.8",
     "babel-eslint": "^10.1.0",
     "jest": "^27.3.1"
+  },
+  "devDependencies": {
+    "tsc-publish": "^0.5.2",
+    "typescript": "^3.8.3"
   },
   "jest": {
     "verbose": true,
