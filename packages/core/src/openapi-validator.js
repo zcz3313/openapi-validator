@@ -1,7 +1,7 @@
 const {Spectral, Document, Ruleset} = require('@stoplight/spectral-core');
 const {httpAndFileResolver} = require("@stoplight/spectral-ref-resolver");
 const spectralParsers = require("@stoplight/spectral-parsers");
-const {readFile} = require("fs/promises");
+const fs = require("fs/promises");
 
 class OpenApiValidator {
   #_spectral;
@@ -37,11 +37,11 @@ class OpenApiValidator {
       }
       this.#_document = new Document(doc, this.#_parser);
     } else if (this.#_documentPath) {
-      const file = await readFile(this.#_documentPath, {encoding: 'utf8'});
-      this.#_document = new Document(await file, this.#_parser, await file);
+      const file = await fs.readFile(this.#_documentPath, {encoding: 'utf8'});
+      this.#_document = new Document(file, this.#_parser, this.#_documentPath);
     }
 
-    return await this.#_spectral.run(this.document);
+    return await this.#_spectral.run(this.#_document);
   }
 
   get spectral() {

@@ -8,5 +8,5 @@ paths:
     post:
       operationId: create-trailing-period
       description: creates trailing period
-      summary: creates trailing period
+      summary: creates trailing period.
     

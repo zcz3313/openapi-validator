@@ -7,15 +7,6 @@ const {DiagnosticSeverity} = require('@stoplight/types');
 const OpenApiValidator = require("@acsanyi-test/openapi-validator-core/src/openapi-validator");
 
 describe('Rule -- Prohibit summary sentence style', () => {
-  let openApiValidator;
-
-  beforeAll(async () => {
-    let ruleSet = prepareASingleRuleForLoad(ProhibitSummarySentenceStyle)
-    openApiValidator = new OpenApiValidator.Builder()
-      .setResolver(httpAndFileResolver)
-      .setRuleset(ruleSet)
-      .build();
-  });
 
   test('should not display error when summary does not have trailing period', async () => {
     const spec = {
@@ -36,12 +27,15 @@ describe('Rule -- Prohibit summary sentence style', () => {
       }
     };
 
-    const document = new Document(
-      JSON.stringify(spec),
-      jsonParser.Json
-    )
+    const ruleset = prepareASingleRuleForLoad(ProhibitSummarySentenceStyle);
+    
+    const openApiValidator = new OpenApiValidator.Builder()
+    .setDocumentInput(spec)
+    .setDocumentInputType('json')
+    .setRuleset(ruleset)
+    .build();
 
-    const result = await openApiValidator.run(document);
+    const result = await openApiValidator.validateDocument();
     expect(result).not.toBeUndefined();
   });
 
@@ -63,13 +57,16 @@ describe('Rule -- Prohibit summary sentence style', () => {
         }
       }
     };
+    
+    const ruleset = prepareASingleRuleForLoad(ProhibitSummarySentenceStyle);
+    
+    const openApiValidator = new OpenApiValidator.Builder()
+    .setDocumentInput(spec)
+    .setDocumentInputType('json')
+    .setRuleset(ruleset)
+    .build();
 
-    const document = new Document(
-      JSON.stringify(spec),
-      jsonParser.Json
-    )
-
-    const result = await openApiValidator.run(document);
+    const result = await openApiValidator.validateDocument();
     expect(result).not.toBeUndefined();
     expect(result.length).toBe(1);
     const errors = result.filter(({code}) => code === ProhibitSummarySentenceStyle.ruleName);
@@ -103,12 +100,15 @@ describe('Rule -- Prohibit summary sentence style', () => {
       }
     };
 
-    const document = new Document(
-      JSON.stringify(spec),
-      jsonParser.Json
-    );
-
-    const result = await openApiValidator.run(document);
+    const ruleset = prepareASingleRuleForLoad(ProhibitSummarySentenceStyle);
+    
+    const openApiValidator = new OpenApiValidator.Builder()
+    .setDocumentInput(spec)
+    .setDocumentInputType('json')
+    .setRuleset(ruleset)
+    .build();
+    
+    const result = await openApiValidator.validateDocument();
     expect(result).not.toBeUndefined();
     const errors = result.filter(({code}) => code === ProhibitSummarySentenceStyle.ruleName);
     expect(errors.length).toBe(2);

@@ -1,6 +1,6 @@
 {
   "name": "@acsanyi-test/openapi-validator-core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "> TODO: description",
   "author": "András Csányi <andras.csanyi@pm.me>",
   "homepage": "https://github.com/IBM/openapi-validator#readme",
