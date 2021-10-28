@@ -32,10 +32,12 @@
     "@acsanyi-test/openapi-validator-core": "^1.0.3",
     "@acsanyi-test/simple-rule": "^1.0.0",
     "@stoplight/spectral-core": "^1.6.0",
+    "@types/node": "^16.11.6",
     "babel-eslint": "^10.1.0",
     "commander": "^8.2.0",
-    "eslint": "^8.0.1",
+    "eslint": "^8.1.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0"
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1"
   }
 }

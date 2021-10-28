@@ -70,7 +70,7 @@ describe('Validating inline and file documents', () => {
     
     const openApiValidator = new OpenApiValidator.Builder()
     .setRuleset(ruleset)
-    .setDocumentPath(__dirname + "/files/dummy.json")
+    .setDocuments(__dirname + "/files/dummy.json")
     .build();
     
     const result = await openApiValidator.validateDocument();
@@ -99,7 +99,7 @@ describe('Validating inline and file documents', () => {
 
     const openApiValidator = new OpenApiValidator.Builder()
       .setRuleset(ruleset)
-      .setDocumentPath(__dirname + "/files/dummy.yaml")
+      .setDocuments(__dirname + "/files/dummy.yaml")
       .build();
 
     const result = await openApiValidator.validateDocument();

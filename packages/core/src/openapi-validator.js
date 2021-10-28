@@ -108,7 +108,7 @@ class OpenApiValidator {
         return this.#_resolver;
       }
 
-      setDocumentPath(documentPath) {
+      setDocuments(documentPath) {
         this.#_documentPath = documentPath;
         return this;
       }

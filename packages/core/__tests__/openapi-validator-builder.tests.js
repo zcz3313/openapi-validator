@@ -62,7 +62,7 @@ describe('OpenApiValidator Builder', () => {
 
     test('should throw when ruleset is not Ruleset type', async () => {
       const builder = new OpenApiValidator.Builder();
-      builder.setDocumentPath("");
+      builder.setDocuments("");
       const ruleset = {};
       builder.setRuleset(ruleset);
       expect(() => {
@@ -145,7 +145,7 @@ describe('OpenApiValidator Builder', () => {
       };
       const openApiValidatorBuilder = new OpenApiValidator.Builder()
         .setRuleset(ruleset)
-        .setDocumentPath("some.json");
+        .setDocuments("some.json");
       const openapiValidator = openApiValidatorBuilder.build();
       expect(openapiValidator.documentPath).not.toBeUndefined();
       expect(openapiValidator.documentPath).toEqual("some.json");
@@ -231,7 +231,7 @@ describe('OpenApiValidator Builder', () => {
       };
       const openApiValidatorBuilder = new OpenApiValidator.Builder()
         .setRuleset(ruleset)
-        .setDocumentPath("asd.json");
+        .setDocuments("asd.json");
       const openapiValidator = openApiValidatorBuilder.build();
       expect(openapiValidator.parser).toBe(spectralParsers.Json);
 
@@ -256,7 +256,7 @@ describe('OpenApiValidator Builder', () => {
       };
       const openApiValidatorBuilder = new OpenApiValidator.Builder()
         .setRuleset(ruleset)
-        .setDocumentPath("asd.yaml");
+        .setDocuments("asd.yaml");
       const openapiValidator = openApiValidatorBuilder.build();
       expect(openapiValidator.parser).toEqual(spectralParsers.Yaml);
 
@@ -281,7 +281,7 @@ describe('OpenApiValidator Builder', () => {
       };
       const openApiValidatorBuilder = new OpenApiValidator.Builder()
         .setRuleset(ruleset)
-        .setDocumentPath("asd.yml");
+        .setDocuments("asd.yml");
       const openapiValidator = openApiValidatorBuilder.build();
       expect(openapiValidator.parser).toEqual(spectralParsers.Yaml);
 
