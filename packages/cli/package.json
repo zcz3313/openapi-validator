@@ -21,9 +21,12 @@
     "url": "git+https://github.com/IBM/openapi-validator.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
-    "lint": "eslint --cache --quiet --ext '.js' src test",
-    "lint-fix": "eslint --fix --ext '.js' src test"
+    "build": "tsc && cp package.json dist/",
+    "test": "jest __tests__/",
+    "jest": "jest",
+    "report-coverage": "codecov",
+    "lint": "eslint --cache --quiet --ext '.js' src __tests__",
+    "lint-fix": "eslint --fix --ext '.js' src __tests__"
   },
   "bugs": {
     "url": "https://github.com/IBM/openapi-validator/issues"
@@ -39,5 +42,17 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.4.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "modulePathIgnorePatterns": [
+      "__files__",
+      "__rules__"
+      
+    ],
+    "moduleNameMapper": {
+      "^nimma/fallbacks$": "<rootDir>/node_modules/nimma/dist/cjs/fallbacks/index.js",
+      "^nimma/legacy$": "<rootDir>/node_modules/nimma/dist/legacy/cjs/index.js"
+    }
   }
 }

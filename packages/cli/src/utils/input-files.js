@@ -19,7 +19,7 @@ async function filterFiles(files, acceptedFileTypes) {
     
     files.forEach(singleFile => {
       const fileType = getFileExtension(singleFile);
-      if (acceptedFileTypes.contains(fileType)) {
+      if (acceptedFileTypes.includes(fileType)) {
         result['accepted'].push(singleFile);
       } else {
         result['not_accepted'].push(singleFile);

@@ -1,0 +1,12 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Dummy file
+servers:
+paths:
+  /create-trailing-period:
+    post:
+      operationId: create-trailing-period
+      description: creates trailing period
+      summary: creates trailing period.
+    

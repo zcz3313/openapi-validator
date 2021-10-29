@@ -15,7 +15,8 @@ class CliRunner {
 
   #_program;
   #_openApiValidator;
-  #_configFileReader;
+  #_spectralYamlReader;
+  #_validateRcFileReader;
   #_openApiValidationExecutionResult;
   #_openApiResultDecorator;
   #_validationResult;
@@ -43,7 +44,7 @@ class CliRunner {
   }
   
   async #executeValidation() {
-    // filter provided files
+    // filter provided files and add the not accepted ones to a list for later print out
     let inputFiles = this.#_program.args;
     const inputFileFilterResult = await filterFiles(inputFiles, this.#_supportedFileTypes);
     await this.#_openApiValidationExecutionResult.addFileFilterResult(inputFileFilterResult);
@@ -81,8 +82,17 @@ class CliRunner {
           throw 'Program is not defined. Exiting.';
         }
         
+        this.#_setUpRuleSets();
+        
         return new CliRunner(this);
       }
+
+      #_setUpRuleSets(){
+        
+        // check if .spectral.yaml exist
+        
+      }
+      
     }
     
     return Builder;

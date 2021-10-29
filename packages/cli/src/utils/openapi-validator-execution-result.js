@@ -21,8 +21,8 @@ class OpenApiValidatorExecutionResult {
     }
     if (fileFilterResult.length === 0) new Promise.reject('file filter result is empyt. Exiting.');
     
-    this.#_acceptedFiles.concat(fileFilterResult['accepted']);
-    this.#_notAcceptedFiles.concat(fileFilterResult['not_accepted']);
+    this.#_acceptedFiles = this.#_acceptedFiles.concat(fileFilterResult['accepted']);
+    this.#_notAcceptedFiles = this.#_notAcceptedFiles.concat(fileFilterResult['not_accepted']);
   }
 }
 
