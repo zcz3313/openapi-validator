@@ -12,41 +12,43 @@ const { OpenApiValidatorExecutionResult } = require('./openapi-validator-executi
  * the result display is responsibility of another component
  */
 class CliRunner {
-
-  #_program;
+  
   #_openApiValidator;
+  #_ruleset;
   #_spectralYamlReader;
   #_validateRcFileReader;
-  #_openApiValidationExecutionResult;
+  #_openApiValidationExecutionResult = new OpenApiValidatorExecutionResult();
   #_openApiResultDecorator;
   #_validationResult;
+  #_command;
+  #_filesToBeValidated;
   
   #_supportedFileTypes = ['json', 'yaml', 'yml'];
   
-  constructor(builder) {
-    this.#_program = builder.program;
-    this.#_openApiValidationExecutionResult = new OpenApiValidatorExecutionResult();
+  constructor(config) {
+    if (config === undefined || config === null) {
+      throw 'Config is not defined. Exiting.';
+    }
+    this.#_command = config.command;
+    this.#_filesToBeValidated = config.filesToBeValidated;
   }
   
   async execute() {
-    if (this.#_program === undefined) throw 'Program is not defined. Exiting.';
-    
-    let args = this.#_program.args;
     
     // strategy pattern here
-    if (args[0] === 'init') {
-      await this.#executeInit()
-    } else if (args[0] === 'migrate'){
-      await this.#executeMigrate();
-    } else {
-      return this.#_validationResult = await this.#executeValidation();
-    }
+    if (this.#_command !== undefined && this.#_command === 'init') {
+      this.#_openApiValidationExecutionResult = await this.#executeInit();
+    } else if (this.#_command !== undefined && this.#_command === 'migrate') {
+      this.#_openApiValidationExecutionResult = await this.#executeMigrate();
+    } else if (this.#_filesToBeValidated.length !== 0) {
+      this.#_openApiValidationExecutionResult = await this.#executeValidation();
+    } 
+    
   }
   
   async #executeValidation() {
     // filter provided files and add the not accepted ones to a list for later print out
-    let inputFiles = this.#_program.args;
-    const inputFileFilterResult = await filterFiles(inputFiles, this.#_supportedFileTypes);
+    const inputFileFilterResult = await filterFiles(this.#_filesToBeValidated, this.#_supportedFileTypes);
     await this.#_openApiValidationExecutionResult.addFileFilterResult(inputFileFilterResult);
     
     return this.#_openApiValidationExecutionResult;
@@ -60,11 +62,16 @@ class CliRunner {
     throw 'Not implemented yet';
   }
   
-  printResult() {}
+  printResult() {
+    // print result
+    // colored
+    // non-colored
+    // json
+  }
   
   static get Builder() {
     
-    class Builder{
+    class Builder {
       #_program;
       
       setProgram(program) {
@@ -81,15 +88,39 @@ class CliRunner {
         if (this.#_program === undefined) {
           throw 'Program is not defined. Exiting.';
         }
+        const cliRunnerConfig = new CliRunnerConfig();
         
         this.#_setUpRuleSets();
         
+        cliRunnerConfig.command = this.#_extractCommand();
+        cliRunnerConfig.filesToBeValidated = this.#_extractListOfFilesToBeValidated();
+        
         return new CliRunner(this);
       }
-
-      #_setUpRuleSets(){
+      
+      #_extractCommand() {
+        if (this.#_program.args[0] === 'init') {
+          return 'init';
+        } else if (this.#_program.args[0] === 'migrate') {
+          return 'migrate';
+        } else {
+          return undefined;
+        }
+      }
+      
+      #_extractListOfFilesToBeValidated() {
+        return this.#_program.args;
+      }
+      
+      #_setUpRuleSets() {
         
-        // check if .spectral.yaml exist
+        if (this.#_program.ruleset !== undefined) {
+          
+        }
+        // check if .spectral.yaml exist and extract the defined ruleset
+        // if not then default
+        // command line parameter
+        
         
       }
       
@@ -98,6 +129,11 @@ class CliRunner {
     return Builder;
   }
   
+}
+
+class CliRunnerConfig{
+  command = undefined;
+  filesToBeValidated = [];
 }
 
 module.exports.CliRunner = CliRunner;
