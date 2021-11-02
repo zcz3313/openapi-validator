@@ -68,6 +68,14 @@ class CliRunner {
     // non-colored
     // json
   }
+  
+  get command() {
+    return this.#_command;
+  }
+  
+  get filesToBeValidated() {
+    return this.#_filesToBeValidated;
+  }
 
   static get Builder() {
 
@@ -96,14 +104,14 @@ class CliRunner {
         cliRunnerConfig.filesToBeValidated = this.#_extractListOfFilesToBeValidated();
         cliRunnerConfig.ruleset = this.#_setUpRuleSets();
 
-        return new CliRunner(this);
+        return new CliRunner(cliRunnerConfig);
       }
 
       #_extractCommand() {
         if (this.#_program.args[0] === 'init') {
-          return 'init';
+          return this.#_program.args[0];
         } else if (this.#_program.args[0] === 'migrate') {
-          return 'migrate';
+          return this.#_program.args[0];
         } else {
           return undefined;
         }
@@ -121,7 +129,10 @@ class CliRunner {
         if (this.#_program.ruleset !== undefined) {
           return this.#_program.ruleset;
         } else {
+          // if .spectral.yaml exists and have ruleset defined
           
+          // when doesn't exist or ruleset is not defined -> default
+          return 'ibm-oas';
         }
         // check if .spectral.yaml exist and extract the defined ruleset
         // if not then default
@@ -129,6 +140,8 @@ class CliRunner {
 
 
       }
+      
+      
 
     }
 
