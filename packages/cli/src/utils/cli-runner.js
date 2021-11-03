@@ -3,10 +3,28 @@ const {program} = require('commander');
 const {filterFiles} = require('./input-files');
 const {OpenApiValidatorExecutionResult} = require('./openapi-validator-execution-result');
 const path = require('path');
-const { findUp } = require('find-up');
+const {findUp} = require('find-up');
 const defaultConfig = require('./src/.defaultsForValidator');
-const { readFile } = require('fs');
+const {readFile} = require('fs');
 const {validateConfigObject} = require('./validate-config-object')
+
+async function runCli(program) {
+
+  try {
+    const cliRunner = new CliRunner.Builder()
+      .setProgram(program)
+      .build();
+
+    await cliRunner.execute();
+    await cliRunner.printResult();
+    // return value 0 and 1
+    return 1;
+  } catch (e) {
+    console.log('fatal error')
+    // return value 0 and 2
+    return 2;
+  }
+};
 
 /**
  * CliRunner is responsible for the following:
@@ -80,17 +98,17 @@ class CliRunner {
     // non-colored
     // json
   }
-  
+
   async #_getDefaultConfig() {
-      return defaultConfig.defaults;
+    return defaultConfig.defaults;
   }
-  
+
   async #_getConfiguration() {
     let configObject;
-    
+
     const findUpOptions = {};
     let configFileName;
-  
+
     // You cannot pass a full path into findUp as a file name, you must split the
     // path or else findUp redudantly prepends the path to the result.
     if (this.#_configFileOverride) {
@@ -99,13 +117,13 @@ class CliRunner {
     } else {
       configFileName = '.validaterc';
     }
-  
+
     // search up the file system for the first instance
     // of '.validaterc' or,
     // if a config file override is passed in, use find-up
     // to verify existence of the file
     const configFile = await findUp(configFileName, findUpOptions);
-  
+
     // if the user does not have a config file, run in default mode and warn them
     // (findUp returns null if it does not find a file)
     if (configFile === null && !this.#_defaultMode) {
@@ -123,7 +141,7 @@ class CliRunner {
       );
       this.#_defaultMode = true;
     }
-    
+
     if (this.#_defaultMode) {
       configObject = this.#_getDefaultConfig();
     } else {
@@ -137,7 +155,7 @@ class CliRunner {
         });
         return Promise.reject(2);
       }
-      
+
       // validate the user object
       configObject = validateConfigObject(configObject);
       if (configObject.invalid) {
@@ -146,19 +164,19 @@ class CliRunner {
       }
     }
   }
-  
+
   get command() {
     return this.#_command;
   }
-  
+
   get filesToBeValidated() {
     return this.#_filesToBeValidated;
   }
-  
+
   get defaultMode() {
     return this.#_defaultMode;
   }
-  
+
   get configFileOverride() {
     return this.#_configFileOverride;
   }
@@ -167,6 +185,7 @@ class CliRunner {
 
     class Builder {
       #_program;
+      #_buildErrors = [];
 
       setProgram(program) {
         this.#_program = program;
@@ -178,20 +197,25 @@ class CliRunner {
       }
 
       build() {
-        
-        if (this.#_program === undefined) {
-          throw 'Program is not defined. Exiting.';
+        try {
+          if (this.#_program === undefined) {
+            this.#_buildErrors.push('Input parameter is undefined');
+            return Promise.reject('Input parameter is undefined');
+          }
+          const cliRunnerConfig = new CliRunnerConfig();
+
+          cliRunnerConfig.command = this.#_extractCommand();
+          cliRunnerConfig.filesToBeValidated = this.#_extractListOfFilesToBeValidated();
+          cliRunnerConfig.defaultMode = this.#_extractDefaultMode();
+          cliRunnerConfig.configFileOverride = this.#_extractConfigFileOverride();
+          cliRunnerConfig.config = this.#_getConfig();
+          cliRunnerConfig.ruleset = this.#_setUpRuleSets();
+
+          return new CliRunner(cliRunnerConfig);
+        } catch (e) {
+          console.log(e);
+          return Promise.reject(2);
         }
-        const cliRunnerConfig = new CliRunnerConfig();
-
-        cliRunnerConfig.command = this.#_extractCommand();
-        cliRunnerConfig.filesToBeValidated = this.#_extractListOfFilesToBeValidated();
-        cliRunnerConfig.defaultMode = this.#_extractDefaultMode();
-        cliRunnerConfig.configFileOverride = this.#_extractConfigFileOverride();
-        cliRunnerConfig.config = this.#_getConfig();
-        cliRunnerConfig.ruleset = this.#_setUpRuleSets();
-
-        return new CliRunner(cliRunnerConfig);
       }
 
       #_extractCommand() {
@@ -199,28 +223,32 @@ class CliRunner {
           return this.#_program.args[0];
         } else if (this.#_program.args[0] === 'migrate') {
           return this.#_program.args[0];
-        } else {
+        } else if (this.#_program.args[0] !== 'init' && this.#_program.args[0] !== 'migrate') {
           return undefined;
+        } else {
+          this.#_buildErrors.push('Neither command nor parameters are not provided.')
+          return Promise.reject('Neither command nor parameters are not provided.');
         }
       }
 
       #_extractListOfFilesToBeValidated() {
         if (this.#_program.args.length === 0) {
-          throw 'No file(s) are defined. Exiting.'
+          this.#_buildErrors.push('No file(s) are defined. Exiting.');
+          return Promise.reject('No file(s) are defined. Exiting.');
         }
         return this.#_program.args;
       }
-      
+
       #_getConfig() {
-        
+
       }
-      
+
       #_extractDefaultMode() {
-        if (this.#_program.args.default_mode){
+        if (this.#_program.args.default_mode) {
           return this.#_program.args.default_mode;
-        } 
+        }
       }
-      
+
       #_extractConfigFileOverride() {
         if (this.#_program.args.config) {
           return this.#_program.args.config;
@@ -233,7 +261,7 @@ class CliRunner {
           return this.#_program.ruleset;
         } else {
           // if .spectral.yaml exists and have ruleset defined
-          
+
           // when doesn't exist or ruleset is not defined -> default
           return 'ibm-oas';
         }
@@ -260,3 +288,4 @@ class CliRunnerConfig {
 
 module.exports.CliRunner = CliRunner;
 module.exports.CliRunnerConfig = CliRunnerConfig;
+module.exports.runCli = runCli;

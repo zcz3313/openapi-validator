@@ -5,7 +5,7 @@
   "author": "András Csányi <andras.csanyi@pm.me>",
   "homepage": "https://github.com/IBM/openapi-validator#readme",
   "license": "ISC",
-  "main": "src/cli.js",
+  "main": "src/utils/cli.js",
   "directories": {
     "lib": "src",
     "test": "test"
@@ -21,12 +21,15 @@
     "url": "git+https://github.com/IBM/openapi-validator.git"
   },
   "scripts": {
-    "build": "tsc && cp package.json dist/",
+    "force-deps": "npx npm-force-resolutions",
+    "link": "npm install -g",
+    "unlink": "npm uninstall -g",
     "test": "jest __tests__/",
     "jest": "jest",
     "report-coverage": "codecov",
     "lint": "eslint --cache --quiet --ext '.js' src __tests__",
-    "lint-fix": "eslint --fix --ext '.js' src __tests__"
+    "lint-fix": "eslint --fix --ext '.js' src __tests__",
+    "pkg": "./node_modules/.bin/pkg --out-path=./bin ./package.json; cd bin; rename -f 's/@openapi-validator/cli-(linux|macos|win)/lint-openapi-$1/g' ./openapi-validator-cli-*"
   },
   "bugs": {
     "url": "https://github.com/IBM/openapi-validator/issues"
@@ -54,5 +57,11 @@
       "^nimma/fallbacks$": "<rootDir>/node_modules/nimma/dist/cjs/fallbacks/index.js",
       "^nimma/legacy$": "<rootDir>/node_modules/nimma/dist/legacy/cjs/index.js"
     }
+  },
+  "bin": {
+    "openapi-validator-cli": "src/utils/cli.js"
+  },
+  "engines": {
+    "node": ">=8.9.0"
   }
 }
