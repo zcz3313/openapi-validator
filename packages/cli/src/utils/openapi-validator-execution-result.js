@@ -5,6 +5,7 @@ class OpenApiValidatorExecutionResult {
   #_acceptedFiles = [];
   #_notAcceptedFiles = [];
   #_errors = {};
+  #_warnings = {};
   #_validationResult = [];
 
   get acceptedFiles() {
@@ -30,6 +31,19 @@ class OpenApiValidatorExecutionResult {
     error.errorType = errorType;
     error.errorMessage = errorMessage;
     this.#_errors.push(error);
+  }
+  
+  async addWarning(warningMessage) {
+    this.#_warnings.push(warningMessage);
+  }
+  
+  async addErrors(errors) {
+    errors.forEach(e => {
+      this.#_errors.push({
+        errorType: 'Config object validation',
+        errorMessage: e
+      });
+    });
   }
 }
 

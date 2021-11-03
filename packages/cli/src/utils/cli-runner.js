@@ -2,6 +2,11 @@ const OpenApiValidator = require('../../../core/src/openapi-validator');
 const {program} = require('commander');
 const {filterFiles} = require('./input-files');
 const {OpenApiValidatorExecutionResult} = require('./openapi-validator-execution-result');
+const path = require('path');
+const { findUp } = require('find-up');
+const defaultConfig = require('./src/.defaultsForValidator');
+const { readFile } = require('fs');
+const {validateConfigObject} = require('./validate-config-object')
 
 /**
  * CliRunner is responsible for the following:
@@ -22,6 +27,9 @@ class CliRunner {
   #_validationResult;
   #_command;
   #_filesToBeValidated;
+  #_defaultMode = false;
+  #_configFileOverride;
+  #_defaultConfig;
 
   #_supportedFileTypes = ['json', 'yaml', 'yml'];
 
@@ -31,6 +39,8 @@ class CliRunner {
     }
     this.#_command = config.command;
     this.#_filesToBeValidated = config.filesToBeValidated;
+    this.#_defaultMode = config.defaultMode;
+    this.#_configFileOverride = config.configFileOverride;
   }
 
   async execute() {
@@ -47,9 +57,11 @@ class CliRunner {
   }
 
   async #executeValidation() {
+    this.#_defaultConfig = await this.#_getDefaultConfig();
     // filter provided files and add the not accepted ones to a list for later print out
     const inputFileFilterResult = await filterFiles(this.#_filesToBeValidated, this.#_supportedFileTypes);
     await this.#_openApiValidationExecutionResult.addFileFilterResult(inputFileFilterResult);
+    const config = await this.#_getConfiguration();
 
     return this.#_openApiValidationExecutionResult;
   }
@@ -69,12 +81,86 @@ class CliRunner {
     // json
   }
   
+  async #_getDefaultConfig() {
+      return defaultConfig.defaults;
+  }
+  
+  async #_getConfiguration() {
+    let configObject;
+    
+    const findUpOptions = {};
+    let configFileName;
+  
+    // You cannot pass a full path into findUp as a file name, you must split the
+    // path or else findUp redudantly prepends the path to the result.
+    if (this.#_configFileOverride) {
+      configFileName = path.basename(this.#_configFileOverride);
+      findUpOptions.cwd = path.dirname(this.#_configFileOverride);
+    } else {
+      configFileName = '.validaterc';
+    }
+  
+    // search up the file system for the first instance
+    // of '.validaterc' or,
+    // if a config file override is passed in, use find-up
+    // to verify existence of the file
+    const configFile = await findUp(configFileName, findUpOptions);
+  
+    // if the user does not have a config file, run in default mode and warn them
+    // (findUp returns null if it does not find a file)
+    if (configFile === null && !this.#_defaultMode) {
+      // console.log(
+      //   '\n' +
+      //   chalk.yellow('[Warning]') +
+      //   ` No ${chalk.underline(
+      //     '.validaterc'
+      //   )} file found. The validator will run in ` +
+      //   chalk.bold.cyan('default mode.')
+      // );
+      // console.log(`To configure the validator, create a .validaterc file.`);
+      await this.#_openApiValidationExecutionResult.addWarning(
+        '[Warning] No .validaterc file found. The validator will wun in default mode.'
+      );
+      this.#_defaultMode = true;
+    }
+    
+    if (this.#_defaultMode) {
+      configObject = this.#_getDefaultConfig();
+    } else {
+      try {
+        const fileAsString = await readFile(configFile, 'utf8');
+        configObject = JSON.parse(fileAsString);
+      } catch (error) {
+        await this.#_openApiValidationExecutionResult.addError({
+          errorType: '.validaterc',
+          errorMessage: 'There is a problem with the .validaterc file. See below for details.' + error
+        });
+        return Promise.reject(2);
+      }
+      
+      // validate the user object
+      configObject = validateConfigObject(configObject);
+      if (configObject.invalid) {
+        await this.#_openApiValidationExecutionResult.addErrors(configObject.errors);
+        return Promise.reject(2);
+      }
+    }
+  }
+  
   get command() {
     return this.#_command;
   }
   
   get filesToBeValidated() {
     return this.#_filesToBeValidated;
+  }
+  
+  get defaultMode() {
+    return this.#_defaultMode;
+  }
+  
+  get configFileOverride() {
+    return this.#_configFileOverride;
   }
 
   static get Builder() {
@@ -92,16 +178,17 @@ class CliRunner {
       }
 
       build() {
-
+        
         if (this.#_program === undefined) {
           throw 'Program is not defined. Exiting.';
         }
         const cliRunnerConfig = new CliRunnerConfig();
 
-        this.#_setUpRuleSets();
-
         cliRunnerConfig.command = this.#_extractCommand();
         cliRunnerConfig.filesToBeValidated = this.#_extractListOfFilesToBeValidated();
+        cliRunnerConfig.defaultMode = this.#_extractDefaultMode();
+        cliRunnerConfig.configFileOverride = this.#_extractConfigFileOverride();
+        cliRunnerConfig.config = this.#_getConfig();
         cliRunnerConfig.ruleset = this.#_setUpRuleSets();
 
         return new CliRunner(cliRunnerConfig);
@@ -123,6 +210,22 @@ class CliRunner {
         }
         return this.#_program.args;
       }
+      
+      #_getConfig() {
+        
+      }
+      
+      #_extractDefaultMode() {
+        if (this.#_program.args.default_mode){
+          return this.#_program.args.default_mode;
+        } 
+      }
+      
+      #_extractConfigFileOverride() {
+        if (this.#_program.args.config) {
+          return this.#_program.args.config;
+        }
+      }
 
       #_setUpRuleSets() {
 
@@ -138,10 +241,7 @@ class CliRunner {
         // if not then default
         // command line parameter
 
-
       }
-      
-      
 
     }
 
@@ -154,6 +254,8 @@ class CliRunnerConfig {
   command = undefined;
   filesToBeValidated = [];
   ruleset;
+  config;
+  configFileOverride;
 }
 
 module.exports.CliRunner = CliRunner;

@@ -69,4 +69,56 @@ describe('Cli Runner Builder', () => {
     
   });
   
+  describe('default mode', () => {
+    
+    test('should defaultMode be false when it is not set up', async () => {
+      const program = {};
+      
+      const cliRunner = new CliRunner.Builder()
+      .setProgram(program)
+      .build();
+      
+      expect(cliRunner.defaultMode).toBeFalsy();
+    });
+  
+    test('should defaultMode be true when it is set up', async () => {
+      const program = {
+        defaultMode: true
+      };
+    
+      const cliRunner = new CliRunner.Builder()
+      .setProgram(program)
+      .build();
+    
+      expect(cliRunner.defaultMode).toBeTruthy();
+    });
+  
+  });
+  
+  describe('config file override', () => {
+    
+    test('should be undefined when it is not provided', async () => {
+      const program = {};
+      
+      const cliRunner = new CliRunner.Builder()
+      .setProgram(program)
+      .build();
+      
+      expect(cliRunner.configFileOverride).toBeUndefined();
+    });
+  
+    test('should have the correct value when it is provided', async () => {
+      const program = {
+        configFileOverride: '.validaterc'
+      };
+    
+      const cliRunner = new CliRunner.Builder()
+      .setProgram(program)
+      .build();
+    
+      expect(cliRunner.configFileOverride).toBe(program.configFileOverride);
+    });
+    
+  });
+  
 });
