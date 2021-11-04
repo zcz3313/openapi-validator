@@ -1,6 +1,5 @@
-const {program} = require('./modified-commander');
-const cliRunner = require('./cli-runner');
-const {runCli} = require("./cli-runner");
+const { program } = require('./modified-commander');
+const { runCli } = require('./cli-runner');
 
 // set up the command line options
 /* prettier-ignore */

@@ -4,8 +4,8 @@ const validateConfigOption = function(userOption, defaultOption) {
   const result = { valid: true };
   // determine what type of option it is
   let optionType;
-  Object.keys(configOptions).forEach(option => {
-    if (configOptions[option].includes(defaultOption)) {
+  Object.keys(defaultsForValidator.options).forEach(option => {
+    if (defaultsForValidator.options[option].includes(defaultOption)) {
       optionType = option;
     }
   });
@@ -14,21 +14,21 @@ const validateConfigOption = function(userOption, defaultOption) {
     return result;
   }
   // verify the given option is valid
-  const validOptions = configOptions[optionType];
+  const validOptions = defaultsForValidator.options[optionType];
   if (!validOptions.includes(userOption)) {
     result.valid = false;
     result.options = validOptions;
   }
-  
+
   return result;
 };
 
 const validateConfigObject = function(configObject) {
   const configErrors = [];
   let validObject = true;
-  
+
   const deprecatedRules = Object.keys(defaultsForValidator.deprecated);
-  
+
   const allowedSpecs = Object.keys(defaultsForValidator.defaults);
   const userSpecs = Object.keys(configObject);
   userSpecs.forEach(spec => {
@@ -44,7 +44,7 @@ const validateConfigObject = function(configObject) {
       });
       return; // skip rules for categories for invalid spec
     }
-    
+
     // check that all categories are valid
     const allowedCategories = Object.keys(defaultsForValidator.defaults[spec]);
     const userCategories = Object.keys(configObject[spec]);
@@ -57,7 +57,7 @@ const validateConfigObject = function(configObject) {
         });
         return; // skip rules for invalid category
       }
-      
+
       // check that all rules are valid
       const allowedRules = Object.keys(defaultsForValidator[spec][category]);
       const userRules = Object.keys(configObject[spec][category]);
@@ -70,7 +70,7 @@ const validateConfigObject = function(configObject) {
           const oldRule = deprecatedRules.includes(rule)
             ? rule
             : `${category}.${rule}`;
-          
+
           const newRule = defaultsForValidator.deprecated[oldRule];
           const message =
             newRule === ''
@@ -87,17 +87,17 @@ const validateConfigObject = function(configObject) {
           });
           return; // skip statuses for invalid rule
         }
-        
+
         // check that all statuses are valid (either 'error', 'warning', 'info', 'hint' or 'off')
         const allowedStatusValues = ['error', 'warning', 'info', 'hint', 'off'];
         let userStatus = configObject[spec][category][rule];
-        
+
         // if the rule supports an array in configuration,
         // it will be an array in the defaults object
         const defaultStatus = defaultsForValidator[spec][category][rule];
         const ruleTakesArray = Array.isArray(defaultStatus);
         const userGaveArray = Array.isArray(userStatus);
-        
+
         if (ruleTakesArray) {
           const userStatusArray = userGaveArray ? userStatus : [userStatus];
           userStatus = userStatusArray[0] || '';
@@ -133,7 +133,7 @@ const validateConfigObject = function(configObject) {
       });
     });
   });
-  
+
   // if the object is valid, resolve any missing features
   //   and set all missing statuses to their default value
   if (validObject) {
@@ -152,7 +152,8 @@ const validateConfigObject = function(configObject) {
         const userRules = Object.keys(configObject[spec][category]);
         requiredRules.forEach(rule => {
           if (!userRules.includes(rule)) {
-            configObject[spec][category][rule] = defaultsForValidator[spec][category][rule];
+            configObject[spec][category][rule] =
+              defaultsForValidator[spec][category][rule];
           }
         });
       });
@@ -161,11 +162,11 @@ const validateConfigObject = function(configObject) {
   } else {
     // if the object is not valid, exit and tell the user why
     // printConfigErrors(configErrors, chalk, '.validaterc');
-    
+
     configObject.errors = configErrors;
     configObject.invalid = true;
   }
-  
+
   return configObject;
 };
 

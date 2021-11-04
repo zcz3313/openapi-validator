@@ -1,30 +1,27 @@
-const OpenApiValidator = require('../../../core/src/openapi-validator');
-const {program} = require('commander');
-const {filterFiles} = require('./input-files');
-const {OpenApiValidatorExecutionResult} = require('./openapi-validator-execution-result');
+const {
+  OpenApiValidatorExecutionResult
+} = require('./openapi-validator-execution-result');
 const path = require('path');
-const {findUp} = require('find-up');
-const defaultConfig = require('./src/.defaultsForValidator');
-const {readFile} = require('fs');
-const {validateConfigObject} = require('./validate-config-object')
+const defaultConfig = require('./../.defaultsForValidator');
+const { readFile } = require('fs');
+const findUp = require('find-up');
+const { filterFiles } = require('./input-files');
+const { validateConfigObject } = require('./validate-config-object');
 
 async function runCli(program) {
-
   try {
-    const cliRunner = new CliRunner.Builder()
-      .setProgram(program)
-      .build();
+    const cliRunner = new CliRunner.Builder().setProgram(program).build();
 
     await cliRunner.execute();
     await cliRunner.printResult();
     // return value 0 and 1
     return 1;
   } catch (e) {
-    console.log('fatal error')
+    console.log('fatal error');
     // return value 0 and 2
     return 2;
   }
-};
+}
 
 /**
  * CliRunner is responsible for the following:
@@ -35,7 +32,6 @@ async function runCli(program) {
  * the result display is responsibility of another component
  */
 class CliRunner {
-
   #_openApiValidator;
   #_ruleset;
   #_spectralYamlReader;
@@ -62,32 +58,38 @@ class CliRunner {
   }
 
   async execute() {
-
     // strategy pattern here
     if (this.#_command !== undefined && this.#_command === 'init') {
-      this.#_openApiValidationExecutionResult = await this.#executeInit();
+      await this.#executeInit();
     } else if (this.#_command !== undefined && this.#_command === 'migrate') {
-      this.#_openApiValidationExecutionResult = await this.#executeMigrate();
+      await this.#executeMigrate();
     } else if (this.#_filesToBeValidated.length !== 0) {
-      this.#_openApiValidationExecutionResult = await this.#executeValidation();
+      await this.#executeValidation();
     }
-
+    
+    return this.#_openApiValidationExecutionResult;
   }
 
   async #executeValidation() {
     this.#_defaultConfig = await this.#_getDefaultConfig();
     // filter provided files and add the not accepted ones to a list for later print out
-    const inputFileFilterResult = await filterFiles(this.#_filesToBeValidated, this.#_supportedFileTypes);
-    await this.#_openApiValidationExecutionResult.addFileFilterResult(inputFileFilterResult);
+    const inputFileFilterResult = await filterFiles(
+      this.#_filesToBeValidated,
+      this.#_supportedFileTypes
+    );
+    await this.#_openApiValidationExecutionResult.addFileFilterResult(
+      inputFileFilterResult
+    );
+    // eslint-disable-next-line no-unused-vars
     const config = await this.#_getConfiguration();
-
-    return this.#_openApiValidationExecutionResult;
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   async #executeInit() {
     throw 'Not implemented yet';
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   async #executeMigrate() {
     throw 'Not implemented yet';
   }
@@ -99,10 +101,12 @@ class CliRunner {
     // json
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   async #_getDefaultConfig() {
     return defaultConfig.defaults;
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   async #_getConfiguration() {
     let configObject;
 
@@ -151,7 +155,9 @@ class CliRunner {
       } catch (error) {
         await this.#_openApiValidationExecutionResult.addError({
           errorType: '.validaterc',
-          errorMessage: 'There is a problem with the .validaterc file. See below for details.' + error
+          errorMessage:
+            'There is a problem with the .validaterc file. See below for details.' +
+            error
         });
         return Promise.reject(2);
       }
@@ -159,7 +165,9 @@ class CliRunner {
       // validate the user object
       configObject = validateConfigObject(configObject);
       if (configObject.invalid) {
-        await this.#_openApiValidationExecutionResult.addErrors(configObject.errors);
+        await this.#_openApiValidationExecutionResult.addErrors(
+          configObject.errors
+        );
         return Promise.reject(2);
       }
     }
@@ -182,7 +190,6 @@ class CliRunner {
   }
 
   static get Builder() {
-
     class Builder {
       #_program;
       #_buildErrors = [];
@@ -223,14 +230,22 @@ class CliRunner {
           return this.#_program.args[0];
         } else if (this.#_program.args[0] === 'migrate') {
           return this.#_program.args[0];
-        } else if (this.#_program.args[0] !== 'init' && this.#_program.args[0] !== 'migrate') {
+        } else if (
+          this.#_program.args[0] !== 'init' &&
+          this.#_program.args[0] !== 'migrate'
+        ) {
           return undefined;
         } else {
-          this.#_buildErrors.push('Neither command nor parameters are not provided.')
-          return Promise.reject('Neither command nor parameters are not provided.');
+          this.#_buildErrors.push(
+            'Neither command nor parameters are not provided.'
+          );
+          return Promise.reject(
+            'Neither command nor parameters are not provided.'
+          );
         }
       }
 
+      // eslint-disable-next-line no-dupe-class-members
       #_extractListOfFilesToBeValidated() {
         if (this.#_program.args.length === 0) {
           this.#_buildErrors.push('No file(s) are defined. Exiting.');
@@ -239,24 +254,25 @@ class CliRunner {
         return this.#_program.args;
       }
 
-      #_getConfig() {
+      // eslint-disable-next-line no-dupe-class-members
+      #_getConfig() {}
 
-      }
-
+      // eslint-disable-next-line no-dupe-class-members
       #_extractDefaultMode() {
         if (this.#_program.args.default_mode) {
           return this.#_program.args.default_mode;
         }
       }
 
+      // eslint-disable-next-line no-dupe-class-members
       #_extractConfigFileOverride() {
         if (this.#_program.args.config) {
           return this.#_program.args.config;
         }
       }
 
+      // eslint-disable-next-line no-dupe-class-members
       #_setUpRuleSets() {
-
         if (this.#_program.ruleset !== undefined) {
           return this.#_program.ruleset;
         } else {
@@ -268,14 +284,11 @@ class CliRunner {
         // check if .spectral.yaml exist and extract the defined ruleset
         // if not then default
         // command line parameter
-
       }
-
     }
 
     return Builder;
   }
-
 }
 
 class CliRunnerConfig {

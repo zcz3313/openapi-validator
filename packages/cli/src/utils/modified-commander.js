@@ -13,11 +13,11 @@ program.unknownOption = function(flag) {
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
-  
+
   // this is the extra code added to the function
   this.outputHelp();
-  
+
   process.exit();
-}
+};
 
 module.exports = program;
