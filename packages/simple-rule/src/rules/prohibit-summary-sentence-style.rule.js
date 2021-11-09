@@ -1,7 +1,7 @@
 const {oas3} = require("@stoplight/spectral-formats");
 const {pattern} = require("@stoplight/spectral-functions");
 
-class ProhibitSummarySentenceStyle{
+class ProhibitSummarySentenceStyleRule{
   static ruleName = "prohibit-summary-sentence-style";
   static rule = {
     description: "Summary should not have a trailing period",
@@ -19,4 +19,4 @@ class ProhibitSummarySentenceStyle{
   };
 }
 
-module.exports = ProhibitSummarySentenceStyle
+module.exports = ProhibitSummarySentenceStyleRule

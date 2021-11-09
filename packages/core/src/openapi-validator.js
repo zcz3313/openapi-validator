@@ -108,7 +108,7 @@ class OpenApiValidator {
         return this.#_resolver;
       }
 
-      setDocuments(documentPath) {
+      setDocumentPath(documentPath) {
         this.#_documentPath = documentPath;
         return this;
       }
@@ -116,24 +116,24 @@ class OpenApiValidator {
       get documentPath() {
         return this.#_documentPath;
       }
-
-      setDocumentInput(documentInput) {
-        this.#_documentInput = documentInput;
-        return this;
-      }
-
-      get documentInput() {
-        return this.#_documentInput;
-      }
-
-      setDocumentInputType(documentInputType) {
-        this.#_documentInputType = documentInputType;
-        return this;
-      }
-
-      get documentInputType() {
-        return this.#_documentInputType;
-      }
+      //
+      // setDocumentInput(documentInput) {
+      //   this.#_documentInput = documentInput;
+      //   return this;
+      // }
+      //
+      // get documentInput() {
+      //   return this.#_documentInput;
+      // }
+      //
+      // setDocumentInputType(documentInputType) {
+      //   this.#_documentInputType = documentInputType;
+      //   return this;
+      // }
+      //
+      // get documentInputType() {
+      //   return this.#_documentInputType;
+      // }
 
       get parser() {
         return this.#_parser;
