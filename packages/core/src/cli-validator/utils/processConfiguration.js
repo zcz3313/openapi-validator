@@ -5,7 +5,7 @@ const globby = require('globby');
 const findUp = require('find-up');
 const printError = require('./printError');
 
-const defaultConfig = require('./.defaultsForValidator');
+const defaultConfig = require('../../.defaultsForValidator');
 
 // global objects
 const readFile = util.promisify(fs.readFile);
@@ -204,7 +204,7 @@ const getConfigObject = async function(defaultMode, chalk, configFileOverride) {
 
   // if the user does not have a config file, run in default mode and warn them
   // (findUp returns null if it does not find a file)
-  if (configFile === undefined && !defaultMode) {
+  if (configFile === null && !defaultMode) {
     console.log(
       '\n' +
         chalk.yellow('[Warning]') +
@@ -377,7 +377,8 @@ const validateConfigOption = function(userOption, defaultOption) {
   return result;
 };
 
-const getSpectralRuleset = async function(rulesetFileOverride, defaultRuleset) {
+// const getSpectralRuleset = async function(rulesetFileOverride, defaultRuleset) {
+const getSpectralRuleset = async function(rulesetFileOverride) {
   // List of ruleset files to search for
   const ruleSetFilesToFind = [
     '.spectral.yaml',
@@ -399,18 +400,15 @@ const getSpectralRuleset = async function(rulesetFileOverride, defaultRuleset) {
   } catch {
     // if there's any issue finding a custom ruleset, then
     // just use the default
-    ruleSetFile = defaultRuleset;
+    // ruleSetFile = defaultRuleset;
+    return null;
   }
 
-  if (!ruleSetFile) {
-    ruleSetFile = defaultRuleset;
-  }
+  // if (!ruleSetFile) {
+  //   ruleSetFile = defaultRuleset;
+  // }
 
   return ruleSetFile;
-};
-
-const createSpectralRuleset = async function(configObject) {
-  
 };
 
 module.exports.get = getConfigObject;

@@ -2,6 +2,7 @@ const {Spectral, Document, Ruleset} = require('@stoplight/spectral-core');
 const {httpAndFileResolver} = require("@stoplight/spectral-ref-resolver");
 const spectralParsers = require("@stoplight/spectral-parsers");
 const fs = require("fs/promises");
+const { oas2, oas3 } = require('@stoplight/spectral-formats');
 
 class OpenApiValidator {
   #_spectral;
@@ -91,7 +92,10 @@ class OpenApiValidator {
       }
 
       setRuleset(ruleset) {
-        this.#_ruleset = ruleset;
+        this.#_ruleset = {
+          formats: [oas2, oas3],
+          rules: ruleset
+        };
         return this;
       }
 

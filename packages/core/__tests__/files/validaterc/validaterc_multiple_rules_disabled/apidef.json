@@ -10,7 +10,7 @@
       "post": {
         "operationId": "create_trailing_period",
         "description": "creates trailing period",
-        "summary": "Adds trailing period"
+        "summary": "Adds trailing period."
       }
     }
   }

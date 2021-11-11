@@ -5,13 +5,10 @@ const ProhibitSummarySentenceStyleRule = require('./rules/prohibit-summary-sente
 module.exports = async function() {
   
   const rules = {
-    formats: [oas3,  oas2],
-    rules: {
-      
-    }
   };
   
-  rules.rules[ExamplesNameContainsSpace.ruleName] = ExamplesNameContainsSpace.rule;
-  rules.rules[ProhibitSummarySentenceStyleRule.ruleName] = ProhibitSummarySentenceStyleRule.rule;
+  rules[ExamplesNameContainsSpace.ruleName] = ExamplesNameContainsSpace.rule;
+  rules[ProhibitSummarySentenceStyleRule.ruleName] = ProhibitSummarySentenceStyleRule.rule;
   
+  return rules;
 };
