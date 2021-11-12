@@ -29,22 +29,15 @@ describe('OpenApi Validator Api - Spectral part', () => {
         expect(result.warnings).toBeUndefined();
       });
       
-      test('should read .validaterc and apply spectral related rules - one rule is disabled', async () => {
+      test('should read .validaterc and apply rules - one rule is disabled', async () => {
         const filePath = __dirname + '/files/validaterc/validaterc_one_rule_disabled/apidef.json';
         const result = await openApiValidator(filePath);
         expect(result.errors).toBeUndefined();
         expect(result.warnings).toBeUndefined();
       });
       
-      test('should read .validaterc and apply spectral related rules - multiple rules are disabled', async () => {
+      test('should read .validaterc and apply rules - multiple rules are disabled', async () => {
         const filePath = __dirname + '/files/validaterc/validaterc_multiple_rules_disabled/apidef.json';
-        const result = await openApiValidator(filePath);
-        expect(result.errors).toBeUndefined();
-        expect(result.warnings).toBeUndefined();
-      });
-      
-      test('should read .validaterc - it does not contain spectral related rules', async () => {
-        const filePath = __dirname + '/files/without_config/dummy.json';
         const result = await openApiValidator(filePath);
         expect(result.errors).toBeUndefined();
         expect(result.warnings).toBeUndefined();
@@ -55,8 +48,20 @@ describe('OpenApi Validator Api - Spectral part', () => {
     describe('config file override - provided .spectral.yaml', () => {
       
       test('should use IBM OAS ruleset when no config file provided', async () => {
+        const filePath = __dirname + '/files/spectralyaml/no_spectralyaml_provided/valid.json';
+        const result = await openApiValidator(filePath);
+        expect(result.errors).toBeUndefined();
+        expect(result.warnings).toBeUndefined();
       });
       test('should load rule from provided .spectral.yaml file', async () => {
+        const apiDefFilePath = __dirname + '/files/spectralyaml/single_additional_spectral_rule/valid.json';
+        const spectralYaml = __dirname + '/files/spectralyaml/single_additional_spectral_rule/.spectral.yaml';
+        const result = await openApiValidator(
+          apiDefFilePath,
+          false,
+          null,
+          spectralYaml);
+        expect(result.errors).toBeUndefined();
       });
       test('should load the many rules from provided .spectral.yaml file', async () => {
       });

@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "title-must-be-longer-than-five-characters": {
+      "description": "Title must be longer than 5 characters",
+      "extends": [
+        null
+      ]
+    },
+    "null": {
+      "function": "length",
+      "functionOptions": {
+        "min": 6
+      }
+    }
+  }
+};"

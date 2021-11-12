@@ -11,7 +11,8 @@ const OpenApiValidator = require('../openapi-validator');
 module.exports = async function(
   input,
   defaultMode = false,
-  configFileOverride = null
+  validateRcFileOverride = null,
+  spectralYamlOverride = null
 ) {
   // process the config file for the validations &
   // create an instance of spectral & load the spectral ruleset, either a user's
@@ -22,8 +23,8 @@ module.exports = async function(
   const openApiValidatorBuilder = new OpenApiValidator.Builder();
 
   try {
-    configObject = await config.get(defaultMode, chalk, configFileOverride);
-    await spectralValidator.setup(openApiValidatorBuilder, null, configObject);
+    configObject = await config.get(defaultMode, chalk, validateRcFileOverride);
+    await spectralValidator.setup(openApiValidatorBuilder, spectralYamlOverride, configObject);
     openApiValidatorBuilder.setDocumentPath(input);
   } catch (err) {
     return Promise.reject(err);

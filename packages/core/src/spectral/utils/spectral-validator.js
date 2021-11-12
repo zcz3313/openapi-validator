@@ -1,9 +1,6 @@
 const MessageCarrier = require('../../plugins/utils/messageCarrier');
 const config = require('../../cli-validator/utils/processConfiguration');
-const { Spectral } = require('@stoplight/spectral-core');
-const { isOpenApiv2, isOpenApiv3 } = require('@stoplight/spectral-core');
-const { mergeRules } = require('@stoplight/spectral-core');
-const ibmOas3Ruleset = require('../../../../simple-rule/src/init');
+const ibmOas3Ruleset = require('@acsanyi-test/ibm-oas');
 const fs = require('fs');
 const path = require('path');
 const { mergeRulesets } = require('@stoplight/spectral-core/dist/ruleset/mergers/rulesets');
