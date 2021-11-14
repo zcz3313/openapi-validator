@@ -3,14 +3,15 @@ const config = require('../../cli-validator/utils/processConfiguration');
 const ibmOas3Ruleset = require('@acsanyi-test/ibm-oas');
 const fs = require('fs');
 const path = require('path');
-const { mergeRulesets } = require('@stoplight/spectral-core/dist/ruleset/mergers/rulesets');
+const {mergeRulesets} = require('@stoplight/spectral-core/dist/ruleset/mergers/rulesets');
+const chalk = require("chalk");
 // default spectral ruleset file
 // const defaultSpectralRulesetURI =
 //   __dirname + '/../rulesets/.defaultsForSpectral.yaml';
 
-const parseResults = function(results, debug) {
+const parseResults = function (results, debug) {
   const messages = new MessageCarrier();
-  
+
   if (results) {
     for (const validationResult of results) {
       if (validationResult) {
@@ -18,13 +19,13 @@ const parseResults = function(results, debug) {
         const severity = validationResult['severity'];
         const message = validationResult['message'];
         const path = validationResult['path'];
-        
+
         if (code === 'parser') {
           // Spectral doesn't allow disabling parser rules, so don't include them
           // in the output (for now)
           continue;
         }
-        
+
         if (typeof severity === 'number' && code && message && path) {
           if (severity === 0) {
             // error
@@ -54,41 +55,49 @@ const parseResults = function(results, debug) {
 };
 
 // setup: registers the oas2/oas3 formats, and attempts to load the ruleset file
-const setup = async function(openApiValidatorBuilder, rulesetFileOverride, configObject) {
+const setup = async function (openApiValidatorBuilder, spectralYamlOverride, configObject) {
   if (!openApiValidatorBuilder) {
     const message =
       'Error (OpenApiValidatorBuilder): An instance of spectral has not been initialized.';
     return Promise.reject(message);
   }
-  
+
   // load the spectral ruleset, either a user's or the default ruleset
   // const spectralRulesetURI = await config.getSpectralRuleset(
   //   rulesetFileOverride,
   //   defaultSpectralRulesetURI
   // );
-  
-  const spectralRulesetURI = await config.getSpectralRuleset(rulesetFileOverride);
-  
+
+  const rulesFromSpectralYaml = await config.getSpectralRuleset(spectralYamlOverride);
+
   // error management if package is not installed
   const ibmOasRuleset = await ibmOas3Ruleset();
-  
+
   // Add IBM default ruleset to static assets to allow extends to reference it
   // const staticAssets = require('@stoplight/spectral/rulesets/assets/assets.json');
   // setupStaticAssets(staticAssets, defaultSpectralRulesetURI);
   // Spectral.registerStaticAssets(staticAssets);
-  
+
   // Register formats
   // spectral.registerFormat('oas2', isOpenApiv2);
   // spectral.registerFormat('oas3', isOpenApiv3);
-  
+
   // Load either the user-defined ruleset or our default ruleset
   // await openApiValidator.setRules(ibmOas3Ruleset)
-  
+
   // Combine default/user ruleset with the validaterc spectral rules
   // The validaterc rules will take precendence in the case of duplicate rules
   // const userRules = Object.assign({}, openApiValidatorBuilder.rules); // Clone rules
+
+  // Possibly there is, at least, a single spectral rule defined in .validaterc, which is not recommended
+  // so we display a warning
+  if (Object.keys(configObject.spectral.rules).length !== 0) {
+    console.log('It seems Spectral rules are defined in .validaterc file. ' +
+      chalk.magenta('Spectral rules should be defined in .spectral.yaml file'));
+  }
+
   try {
-    const mergedRulesets = await mergeRulesets(ibmOasRuleset, configObject.spectral.rules, true);
+    const mergedRulesets = await mergeRulesets(ibmOasRuleset, rulesFromSpectralYaml, true);
     return await openApiValidatorBuilder.setRuleset(mergedRulesets);
   } catch (err) {
     return Promise.reject(err);

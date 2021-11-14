@@ -1,0 +1,13 @@
+rules:
+  title-should-be-longer-than-five-characters:
+    description: "Info.title should be longer than 5 characters"
+    message: "{{description}}"
+    severity: warn
+    formats: [ "oas3" ]
+    resolved: false
+    given:
+      - $.info.title
+    then:
+      function: length
+      functionOptions:
+        min: 6

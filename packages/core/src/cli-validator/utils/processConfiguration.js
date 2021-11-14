@@ -4,9 +4,9 @@ const path = require('path');
 const globby = require('globby');
 const findUp = require('find-up');
 const printError = require('./printError');
-const { migrateRuleset } = require('@stoplight/spectral-ruleset-migrator');
+const {migrateRuleset} = require('@stoplight/spectral-ruleset-migrator');
 const defaultConfig = require('../../.defaultsForValidator');
-const { Spectral } = require('@stoplight/spectral-core');
+const {Spectral} = require('@stoplight/spectral-core');
 const jsYaml = require('js-yaml');
 
 // global objects
@@ -17,15 +17,15 @@ defaultObject.spectral.rules = {};
 const deprecatedRuleObject = defaultConfig.deprecated;
 const configOptions = defaultConfig.options;
 
-const printConfigErrors = function(problems, chalk, fileName) {
+const printConfigErrors = function (problems, chalk, fileName) {
   const description = `Invalid configuration in ${chalk.underline(
     fileName
   )} file. See below for details.`;
-  
+
   const message = [];
-  
+
   // add all errors for printError
-  problems.forEach(function(problem) {
+  problems.forEach(function (problem) {
     message.push(
       `\n - ${chalk.red(problem.message)}\n   ${chalk.magenta(
         problem.correction
@@ -37,12 +37,12 @@ const printConfigErrors = function(problems, chalk, fileName) {
   }
 };
 
-const validateConfigObject = function(configObject, chalk) {
+const validateConfigObject = function (configObject, chalk) {
   const configErrors = [];
   let validObject = true;
-  
+
   const deprecatedRules = Object.keys(deprecatedRuleObject);
-  
+
   const allowedSpecs = Object.keys(defaultObject);
   const userSpecs = Object.keys(configObject);
   userSpecs.forEach(spec => {
@@ -58,7 +58,7 @@ const validateConfigObject = function(configObject, chalk) {
       });
       return; // skip rules for categories for invalid spec
     }
-    
+
     // check that all categories are valid
     const allowedCategories = Object.keys(defaultObject[spec]);
     const userCategories = Object.keys(configObject[spec]);
@@ -71,7 +71,7 @@ const validateConfigObject = function(configObject, chalk) {
         });
         return; // skip rules for invalid category
       }
-      
+
       // check that all rules are valid
       const allowedRules = Object.keys(defaultObject[spec][category]);
       const userRules = Object.keys(configObject[spec][category]);
@@ -84,7 +84,7 @@ const validateConfigObject = function(configObject, chalk) {
           const oldRule = deprecatedRules.includes(rule)
             ? rule
             : `${category}.${rule}`;
-          
+
           const newRule = deprecatedRuleObject[oldRule];
           const message =
             newRule === ''
@@ -101,17 +101,17 @@ const validateConfigObject = function(configObject, chalk) {
           });
           return; // skip statuses for invalid rule
         }
-        
+
         // check that all statuses are valid (either 'error', 'warning', 'info', 'hint' or 'off')
         const allowedStatusValues = ['error', 'warning', 'info', 'hint', 'off'];
         let userStatus = configObject[spec][category][rule];
-        
+
         // if the rule supports an array in configuration,
         // it will be an array in the defaults object
         const defaultStatus = defaultObject[spec][category][rule];
         const ruleTakesArray = Array.isArray(defaultStatus);
         const userGaveArray = Array.isArray(userStatus);
-        
+
         if (ruleTakesArray) {
           const userStatusArray = userGaveArray ? userStatus : [userStatus];
           userStatus = userStatusArray[0] || '';
@@ -147,7 +147,7 @@ const validateConfigObject = function(configObject, chalk) {
       });
     });
   });
-  
+
   // if the object is valid, resolve any missing features
   //   and set all missing statuses to their default value
   if (validObject) {
@@ -176,19 +176,19 @@ const validateConfigObject = function(configObject, chalk) {
   } else {
     // if the object is not valid, exit and tell the user why
     printConfigErrors(configErrors, chalk, '.validaterc');
-    
+
     configObject.invalid = true;
   }
-  
+
   return configObject;
 };
 
-const getConfigObject = async function(defaultMode, chalk, configFileOverride) {
+const getConfigObject = async function (defaultMode, chalk, configFileOverride) {
   let configObject;
-  
+
   const findUpOpts = {};
   let configFileName;
-  
+
   // You cannot pass a full path into findUp as a file name, you must split the
   // path or else findUp redudantly prepends the path to the result.
   if (configFileOverride) {
@@ -197,13 +197,13 @@ const getConfigObject = async function(defaultMode, chalk, configFileOverride) {
   } else {
     configFileName = '.validaterc';
   }
-  
+
   // search up the file system for the first instance
   // of '.validaterc' or,
   // if a config file override is passed in, use find-up
   // to verify existence of the file
   const configFile = await findUp(configFileName, findUpOpts);
-  
+
   // if the user does not have a config file, run in default mode and warn them
   // (findUp returns null if it does not find a file)
   if (configFile === null && !defaultMode) {
@@ -218,7 +218,7 @@ const getConfigObject = async function(defaultMode, chalk, configFileOverride) {
     console.log(`To configure the validator, create a .validaterc file.`);
     defaultMode = true;
   }
-  
+
   if (defaultMode) {
     configObject = defaultObject;
   } else {
@@ -232,40 +232,40 @@ const getConfigObject = async function(defaultMode, chalk, configFileOverride) {
       printError(chalk, description, err);
       return Promise.reject(2);
     }
-    
+
     // validate the user object
     configObject = validateConfigObject(configObject, chalk);
     if (configObject.invalid) {
       return Promise.reject(2);
     }
   }
-  
+
   return configObject;
 };
 
-const getFilesToIgnore = async function() {
+const getFilesToIgnore = async function () {
   // search up the file system for the first instance
   // of the ignore file
   const ignoreFile = await findUp('.validateignore');
-  
+
   // if file does not exist, thats fine. it is optional
   if (ignoreFile === null) return [];
-  
+
   const pathToFile = `${path.dirname(ignoreFile)}/`;
-  
+
   let filesToIgnore;
   try {
     const fileAsString = await readFile(ignoreFile, 'utf8');
-    
+
     // convert each glob in ignore file to an absolute path.
     // globby takes args relative to the process cwd, but we
     // want these to stay relative to project root
     // also, ignore any blank lines
     const globsToIgnore = fileAsString
-    .split('\n')
-    .filter(line => line.trim().length !== 0)
-    .map(glob => pathToFile + glob);
-    
+      .split('\n')
+      .filter(line => line.trim().length !== 0)
+      .map(glob => pathToFile + glob);
+
     filesToIgnore = await globby(globsToIgnore, {
       expandDirectories: true,
       dot: true
@@ -273,15 +273,15 @@ const getFilesToIgnore = async function() {
   } catch (err) {
     filesToIgnore = [];
   }
-  
+
   return filesToIgnore;
 };
 
-const validateLimits = function(limitsObject, chalk) {
+const validateLimits = function (limitsObject, chalk) {
   const allowedLimits = ['warnings'];
   const limitErrors = [];
-  
-  Object.keys(limitsObject).forEach(function(key) {
+
+  Object.keys(limitsObject).forEach(function (key) {
     if (!allowedLimits.includes(key)) {
       // remove the entry and notify the user
       delete limitsObject[key];
@@ -303,39 +303,39 @@ const validateLimits = function(limitsObject, chalk) {
       }
     }
   });
-  
+
   // give the user corrections for .thresholdrc file
   if (limitErrors.length) {
     printConfigErrors(limitErrors, chalk, '.thresholdrc');
   }
-  
+
   //  sets all limits options not defined by user to default
   for (const limitOption of allowedLimits) {
     if (!(limitOption in limitsObject)) {
       limitsObject[limitOption] = Number.MAX_VALUE;
     }
   }
-  
+
   return limitsObject;
 };
 
-const getLimits = async function(chalk, limitsFileOverride) {
+const getLimits = async function (chalk, limitsFileOverride) {
   let limitsObject = {};
-  
+
   const findUpOpts = {};
   let limitsFileName;
-  
+
   if (limitsFileOverride) {
     limitsFileName = path.basename(limitsFileOverride);
     findUpOpts.cwd = path.dirname(limitsFileOverride);
   } else {
     limitsFileName = '.thresholdrc';
   }
-  
+
   // search up the file system for the first instance
   // of the threshold file
   const limitsFile = await findUp(limitsFileName, findUpOpts);
-  
+
   if (limitsFile !== null) {
     try {
       const fileAsString = await readFile(limitsFile, 'utf8');
@@ -348,16 +348,16 @@ const getLimits = async function(chalk, limitsFileOverride) {
       return Promise.reject(2);
     }
   }
-  
+
   // returns complete limits object with all valid user settings
   // and default values for undefined limits
   limitsObject = validateLimits(limitsObject, chalk);
-  
+
   return limitsObject;
 };
 
-const validateConfigOption = function(userOption, defaultOption) {
-  const result = { valid: true };
+const validateConfigOption = function (userOption, defaultOption) {
+  const result = {valid: true};
   // determine what type of option it is
   let optionType;
   Object.keys(configOptions).forEach(option => {
@@ -375,12 +375,12 @@ const validateConfigOption = function(userOption, defaultOption) {
     result.valid = false;
     result.options = validOptions;
   }
-  
+
   return result;
 };
 
 // const getSpectralRuleset = async function(rulesetFileOverride, defaultRuleset) {
-const getSpectralRuleset = async function(rulesetFileOverride) {
+const getSpectralRuleset = async function (spectralYamlOverride) {
   // List of ruleset files to search for
   // const ruleSetFilesToFind = [
   //   '.spectral.yaml',
@@ -392,13 +392,13 @@ const getSpectralRuleset = async function(rulesetFileOverride) {
   // }
   // let ruleSetFile;
   let additionalSpectralRuleset;
-  
+
   // search up the file system for the first ruleset file found
   try {
     // for (const file of ruleSetFilesToFind) {
     //   if (!ruleSetFile) {
-    const res = await findUp(rulesetFileOverride);
-    const rulesetJs = jsYaml.load(fs.readFileSync(rulesetFileOverride, {encoding: 'utf-8'}));
+    const res = await findUp(spectralYamlOverride);
+    const rulesetJs = jsYaml.load(fs.readFileSync(spectralYamlOverride, {encoding: 'utf-8'}));
     return rulesetJs;
     // const readRuleset = fs.readFileSync(rulesetFileOverride, { encoding: 'utf8'});
     // const spectral = new Spectral();
@@ -417,14 +417,14 @@ const getSpectralRuleset = async function(rulesetFileOverride) {
     // if there's any issue finding a custom ruleset, then
     // just use the default
     // ruleSetFile = defaultRuleset;
-    console.log(`Can' read ruleset file: ${rulesetFileOverride}. Error: ${e}`);
+    console.log(`Can' read ruleset file: ${spectralYamlOverride}. Error: ${e}`);
     return null;
   }
-  
+
   // if (!ruleSetFile) {
   //   ruleSetFile = defaultRuleset;
   // }
-  
+
   // return ruleSetFile;
 };
 
