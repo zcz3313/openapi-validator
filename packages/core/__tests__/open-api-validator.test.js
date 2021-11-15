@@ -1,7 +1,7 @@
 const openApiValidator = require('../src/lib/index');
 describe('OpenApi Validator Api - Spectral part', () => {
 
-  test('should validate valid api definition', async () => {
+  test.skip('should validate valid api definition', async () => {
     const filePath = __dirname + '/files/valid.json';
     const result = await openApiValidator(filePath);
     expect(result.errors).toBeUndefined();
@@ -11,49 +11,49 @@ describe('OpenApi Validator Api - Spectral part', () => {
   describe('parameter tests', () => {
     describe('default mode', () => {
 
-      test('should ignore .validaterc when default mode is true', async () => {
+      test.skip('should ignore .validaterc when default mode is true', async () => {
       });
-      test('should apply .validaterc when default mode is false', async () => {
+      test.skip('should apply .validaterc when default mode is false', async () => {
       });
-      test('should apply .validaterc when default mode is not defined', async () => {
+      test.skip('should apply .validaterc when default mode is not defined', async () => {
       });
 
     });
 
     describe('.validaterc', () => {
 
-      test('should validate file when directory does not have .validaterc', async () => {
+      test.skip('should validate file when directory does not have .validaterc', async () => {
         const filePath = __dirname + '/files/validaterc/no_validaterc/apidef.json';
         const result = await openApiValidator(filePath);
         expect(result.errors).toBeUndefined();
         expect(result.warnings).toBeUndefined();
       });
 
-      test('should read .validaterc and apply rules - one rule is disabled', async () => {
+      test.skip('should read .validaterc and apply rules - one rule is disabled', async () => {
         const filePath = __dirname + '/files/validaterc/validaterc_one_rule_disabled/apidef.json';
         const result = await openApiValidator(filePath);
         expect(result.errors).toBeUndefined();
         expect(result.warnings).toBeUndefined();
       });
 
-      test('should read .validaterc and apply rules - multiple rules are disabled', async () => {
+      test.skip('should read .validaterc and apply rules - multiple rules are disabled', async () => {
         const filePath = __dirname + '/files/validaterc/validaterc_multiple_rules_disabled/apidef.json';
         const result = await openApiValidator(filePath);
         expect(result.errors).toBeUndefined();
         expect(result.warnings).toBeUndefined();
       });
 
-      test('should display warning if spectral rule is defined in .validaterc', async () => {
+      test.skip('should display warning if spectral rule is defined in .validaterc', async () => {
       });
 
     });
 
     describe('config file override - provided .spectral.yaml', () => {
 
-      test('should throw when provided rules from .spectral.yaml are not extend ibm-oas', async () => {
+      test.skip('should throw when provided rules from .spectral.yaml does not extend ibm-oas', async () => {
       });
 
-      test('should use IBM OAS ruleset when no config file provided', async () => {
+      test.skip('should use IBM OAS ruleset when no config file provided', async () => {
         const filePath = __dirname + '/files/spectralyaml/no_spectralyaml_provided/valid.json';
         const result = await openApiValidator(filePath);
         expect(result.errors).toBeUndefined();
@@ -68,9 +68,12 @@ describe('OpenApi Validator Api - Spectral part', () => {
           false,
           null,
           spectralYaml);
-        expect(result.errors).toBeUndefined();
+        expect(result.errors).not.toBeUndefined();
+        expect(result.errors.length).toBe(1);
+        expect(result.errors[0].rule === 'title-must-be-longer-than-five-characters').toBeTruthy();
+        expect(result.errors[0].path).toEqual(["info", "title"]);
       });
-      test('should load the many rules from provided .spectral.yaml file', async () => {
+      test.skip('should load the many rules from provided .spectral.yaml file', async () => {
       });
 
     });

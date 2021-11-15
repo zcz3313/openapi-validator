@@ -92,10 +92,7 @@ class OpenApiValidator {
       }
 
       setRuleset(ruleset) {
-        this.#_ruleset = {
-          formats: [oas2, oas3],
-          rules: ruleset
-        };
+        this.#_ruleset = ruleset;
         return this;
       }
 
