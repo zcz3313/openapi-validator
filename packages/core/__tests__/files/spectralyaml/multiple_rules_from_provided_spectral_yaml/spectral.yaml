@@ -1,0 +1,23 @@
+rules:
+  title-must-be-longer-than-five-characters:
+    description: 'Title must be longer than 5 characters'
+    message: 'Title must be longer than 5 characters'
+    given: "$.info.*"
+    severity: error
+    formats: ["oas3"]
+    then:
+      field: title
+      function: length
+      functionOptions:
+        min: 6
+  description-must-be-longer-than-five-characters:
+    description: 'Description must be longer than 5 characters'
+    message: 'Description must be longer than 5 characters'
+    given: "$.paths[*].post.*"
+    severity: error
+    formats: [ "oas3" ]
+    then:
+      field: description
+      function: length
+      functionOptions:
+        min: 6

@@ -1,0 +1,17 @@
+{
+  "openapi": "3.0.0.",
+  "info": {
+    "version": "1.0.0.",
+    "title": "Summary has trailing period"
+  },
+  "servers": {},
+  "paths": {
+    "/create_trailing_period": {
+      "post": {
+        "operationId": "create_trailing_period",
+        "description": "creates trailing period",
+        "summary": "Adds trailing period."
+      }
+    }
+  }
+}

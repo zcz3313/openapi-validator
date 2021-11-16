@@ -80,10 +80,10 @@ const setup = async function(openApiValidatorBuilder, providedRulesetFile, confi
   
   let ruleset;
   
-  const rulesetFromProvidedRulesetFile = await config.getSpectralRuleset(providedRulesetFile);
   const defaultRuleset = await ibmOas3Ruleset();
   
-  if (rulesetFromProvidedRulesetFile) {
+  if (providedRulesetFile) {
+    const rulesetFromProvidedRulesetFile = await config.getSpectralRuleset(providedRulesetFile);
     bundledRuleset = await bundleRuleset(providedRulesetFile, {
       target: 'node',
       format: 'commonjs',
