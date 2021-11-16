@@ -1,4 +1,4 @@
-const OpenApiValidator = require("../src/openapi-validator");
+const OpenApiValidator = require("../../src/openapi-validator");
 const {Document} = require("@stoplight/spectral-core");
 const spectralParsers = require("@stoplight/spectral-parsers");
 const {oas} = require("@stoplight/spectral-rulesets");

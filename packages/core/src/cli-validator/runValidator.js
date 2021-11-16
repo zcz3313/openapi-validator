@@ -19,9 +19,11 @@ const preprocessFile = require('./utils/preprocessFile');
 const spectralValidator = require('../spectral/utils/spectral-validator');
 const dedupFunction = require('../cli-validator/utils/noDeduplication');
 const addPathsToComponents = require('./utils/addPathsToComponents');
-const { Spectral } = require('@stoplight/spectral');
+const { Spectral } = require('@stoplight/spectral-core');
 // import the init module for creating a .validaterc file
 const init = require('./utils/init.js');
+const { OpenApiValidatorExecutionResult } = require('../../../cli/src/utils/openapi-validator-execution-result');
+const OpenApiValidator = require('../openapi-validator');
 
 // this function processes the input, does the error handling,
 //  and acts as the main function for the program
@@ -170,11 +172,12 @@ const processInput = async function(program) {
 
   // create an instance of spectral & load the spectral ruleset, either a user's
   // or the default ruleset
-  const spectral = new Spectral({
-    computeFingerprint: dedupFunction
-  });
+  // const spectral = new Spectral({
+  //   computeFingerprint: dedupFunction
+  // });
+  const openApiValidatorBuilder = new OpenApiValidator.Builder();
   try {
-    await spectralValidator.setup(spectral, rulesetFileOverride, configObject);
+    await spectralValidator.setup(openApiValidatorBuilder, rulesetFileOverride, configObject);
   } catch (err) {
     return Promise.reject(err);
   }
@@ -250,12 +253,17 @@ const processInput = async function(program) {
       process.chdir(originalWorkingDirectory);
     }
 
+    let openApiValidator;
+    const validFileFullPath = originalWorkingDirectory + validFile.substring(1);
+    openApiValidatorBuilder.setDocumentPath(validFileFullPath);
+    openApiValidator = openApiValidatorBuilder.build();
+    
     // run spectral and save the results
     let spectralResults;
     try {
       process.chdir(path.dirname(validFile));
       // let spectral handle the parsing of the original swagger/oa3 document
-      spectralResults = await spectral.run(originalFile);
+      spectralResults = await openApiValidator.validateDocument();
     } catch (err) {
       printError(chalk, 'There was a problem with spectral.', getError(err));
       if (debug) {
