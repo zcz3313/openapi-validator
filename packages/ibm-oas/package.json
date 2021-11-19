@@ -1,11 +1,11 @@
 {
   "name": "@acsanyi-test/ibm-oas",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Just a simple rule",
   "author": "András Csányi <andras.csanyi@pm.me>",
   "homepage": "https://github.com/Andras-Csanyi/simple-rule#readme",
   "license": "ISC",
-  "main": "src/init.js",
+  "main": "src/ibm-oas.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

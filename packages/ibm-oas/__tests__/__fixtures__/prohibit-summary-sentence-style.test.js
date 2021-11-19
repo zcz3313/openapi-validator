@@ -1,10 +1,7 @@
-const ProhibitSummarySentenceStyle = require("../../src/rules/prohibit-summary-sentence-style");
-const jsonParser = require("@stoplight/spectral-parsers");
-const {Document} = require('@stoplight/spectral-core')
 const prepareASingleRuleForLoad = require("../__helpers__/prepare-a-single-rule-for-load");
-const {httpAndFileResolver} = require("@stoplight/spectral-ref-resolver");
 const {DiagnosticSeverity} = require('@stoplight/types');
 const OpenApiValidator = require("@acsanyi-test/openapi-validator-core/src/openapi-validator");
+const ProhibitSummarySentenceStyle = require('../../../cli/__tests__/__rules__/prohibit-summary-sentence-style');
 
 describe('Rule -- Prohibit summary sentence style', () => {
 

@@ -1,4 +1,4 @@
-const ruleLoader = require('../../src/init')
+const ruleLoader = require('../../src/ibm-oas')
 describe('Rule loader', () =>{
   
   test('should', async () => {

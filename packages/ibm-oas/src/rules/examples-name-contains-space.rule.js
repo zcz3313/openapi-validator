@@ -13,7 +13,7 @@ class ExamplesNameContainsSpaceRule{
     then: {
       function: pattern,
       functionOptions:{
-        notMatch: '^(.*\s+.*)+$'
+        notMatch: "^(.*\s+.*)+$"
       }
     }
   }

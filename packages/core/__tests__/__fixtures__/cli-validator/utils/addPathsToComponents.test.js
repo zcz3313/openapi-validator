@@ -1,5 +1,4 @@
 const addPathsToComponents = require('../../../../src/cli-validator/utils/addPathsToComponents');
-const addPathsToComponents = require('../../../.');
 
 describe('test postprocessing util - test component path finding', function() {
   it('should correctly add component paths', function() {

@@ -1,5 +1,5 @@
 const commandLineValidator = require('../../../src/cli-validator/runValidator');
-const { getCapturedText } = require('../../test-utils');
+const { getCapturedText } = require('../../__utils__/test-utils');
 
 // for an explanation of the text interceptor, see the comments for the
 // first test in expectedOutput.js
@@ -114,8 +114,9 @@ describe('cli tool - test error handling', function() {
   });
 
   it('should return an error when a file contains an invalid object', async function() {
+    const file = './__tests__/__fixtures__/cli-validator/mockFiles/bad-json.json';
     const program = {};
-    program.args = ['./test/cli-validator/mockFiles/bad-json.json'];
+    program.args = [file];
     program.default_mode = true;
 
     let exitCode;
@@ -130,7 +131,7 @@ describe('cli tool - test error handling', function() {
     expect(exitCode).toEqual(1);
     expect(capturedText.length).toEqual(3);
     expect(capturedText[0].trim()).toEqual(
-      '[Error] Invalid input file: ./test/cli-validator/mockFiles/bad-json.json. See below for details.'
+      `[Error] Invalid input file: ${file}. See below for details.`
     );
     expect(capturedText[1].trim()).toEqual(
       'SyntaxError: Unexpected token ; in JSON at position 14'
@@ -138,8 +139,9 @@ describe('cli tool - test error handling', function() {
   });
 
   it('should return an error when a json file has duplicated key mappings', async function() {
+    const file = './__tests__/__fixtures__/cli-validator/mockFiles/duplicate-keys.json'
     const program = {};
-    program.args = ['./test/cli-validator/mockFiles/duplicate-keys.json'];
+    program.args = [file];
     program.default_mode = true;
 
     let exitCode;
@@ -154,7 +156,7 @@ describe('cli tool - test error handling', function() {
     expect(exitCode).toEqual(1);
     expect(capturedText.length).toEqual(3);
     expect(capturedText[0].trim()).toEqual(
-      '[Error] Invalid input file: ./test/cli-validator/mockFiles/duplicate-keys.json. See below for details.'
+      `[Error] Invalid input file: ${file}. See below for details.`
     );
     expect(capturedText[1].trim()).toEqual(
       'Syntax error: duplicated keys "version" near sion": "1.'
@@ -163,7 +165,7 @@ describe('cli tool - test error handling', function() {
 
   it('should return an error when the swagger contains a reference to a missing object', async function() {
     const program = {};
-    program.args = ['./test/cli-validator/mockFiles/missing-object.yml'];
+    program.args = ['./__tests__/__fixtures__/cli-validator/mockFiles/missing-object.yml'];
     program.default_mode = true;
 
     let exitCode;
@@ -186,8 +188,9 @@ describe('cli tool - test error handling', function() {
   });
 
   it('should return an error when the swagger contains a trailing comma', async function() {
+    const file = './__tests__/__fixtures__/cli-validator/mockFiles/trailing-comma.json';
     const program = {};
-    program.args = ['./test/cli-validator/mockFiles/trailing-comma.json'];
+    program.args = [file];
     program.default_mode = true;
 
     let exitCode;
@@ -200,9 +203,9 @@ describe('cli tool - test error handling', function() {
     const capturedText = getCapturedText(consoleSpy.mock.calls);
 
     expect(exitCode).toEqual(1);
-    expect(capturedText.length).toEqual(29);
+    expect(capturedText.length).toEqual(17);
     expect(capturedText[0].trim()).toEqual(
-      '[Error] Trailing comma on line 36 of file ./test/cli-validator/mockFiles/trailing-comma.json.'
+      `[Error] Trailing comma on line 36 of file ${file}.`
     );
     expect(capturedText[4]).toContain(
       'Parameter objects must have a `description` field.'

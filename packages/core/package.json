@@ -32,7 +32,7 @@
     "url": "https://github.com/IBM/openapi-validator/issues"
   },
   "dependencies": {
-    "@acsanyi-test/ibm-oas": "^1.0.4",
+    "@acsanyi-test/ibm-oas": "^1.0.5",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@stoplight/path": "^1.3.2",
     "@stoplight/spectral-cli": "^6.1.0",

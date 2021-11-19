@@ -2,7 +2,7 @@
 /* eslint-disable camelcase */
 
 const chalk = require('chalk');
-const { getCapturedText } = require('../../test-utils');
+const { getCapturedText } = require('../../__utils__/test-utils');
 
 const { defaults, options } = require('../../../src/.defaultsForValidator');
 

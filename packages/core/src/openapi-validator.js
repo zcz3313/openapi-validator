@@ -21,6 +21,7 @@ class OpenApiValidator {
     this.#_parser = builder.parser;
     this.#_documentInput = builder.documentInput;
     this.#_documentInputType = builder.documentInputType;
+    this.#_document = builder.documentPath;
 
     this.#_spectral = new Spectral({
       resolver: this.#_resolver
@@ -30,17 +31,17 @@ class OpenApiValidator {
 
   async validateDocument() {
 
-    this.#_document = undefined;
-    if (this.#_documentInput && this.#_documentInputType) {
-      let doc = undefined;
-      if (this.#_documentInputType === 'json') {
-        doc = JSON.stringify(this.#_documentInput);
-      }
-      this.#_document = new Document(doc, this.#_parser);
-    } else if (this.#_documentPath) {
-      const file = await fs.readFile(this.#_documentPath, {encoding: 'utf8'});
-      this.#_document = new Document(file, this.#_parser, this.#_documentPath);
-    }
+    // this.#_document = undefined;
+    // if (this.#_documentInput && this.#_documentInputType) {
+    //   let doc = undefined;
+    //   if (this.#_documentInputType === 'json') {
+    //     doc = JSON.stringify(this.#_documentInput);
+    //   }
+    //   this.#_document = new Document(doc, this.#_parser);
+    // } else if (this.#_documentPath) {
+    //   const file = await fs.readFile(this.#_documentPath, {encoding: 'utf8'});
+    //   this.#_document = new Document(file, this.#_parser, this.#_documentPath);
+    // }
 
     return await this.#_spectral.run(this.#_document);
   }
@@ -152,37 +153,41 @@ class OpenApiValidator {
           throw `Ruleset must be type: ${Ruleset.name}`;
         }
 
+        if (this.documentPath === undefined || this.documentPath === null) {
+          throw `Document must be provided!`;
+        }
+        
         // when document input and document input type are undefined we work
         // a file on the file system
-        if (this.#_documentInput === undefined && this.#_documentInputType === undefined) {
-
-          if (this.#_documentPath === undefined) {
-            throw "document path must be set up!"
-          }
-
-          if (this.#_documentPath.slice(-4) === 'yaml' || this.#_documentPath.slice(-4) === '.yml') {
-            this.#_parser = spectralParsers.Yaml;
-          } else if (this.#_documentPath.slice(-4) === 'json') {
-            this.#_parser = spectralParsers.Json;
-          } else {
-            throw `Cannot determine file type! Actual filepath is: ${this.#_documentPath}`;
-          }
-
-        } else if (this.#_documentInput !== undefined && this.#_documentInputType !== undefined) {
-          // when document input and document input type are not undefined
-          // then we work with a provided inline document
-
-          if (this.#_documentInputType === 'json') {
-            this.#_parser = spectralParsers.Json;
-          } else if (this.#_documentInputType === 'yaml' || this.#_documentInputType === 'yml') {
-            this.#_parser = spectralParsers.Yaml;
-          } else {
-            throw `Document input type must be either 'json', 'yaml' or 'yml'. Actual value ${this.#_documentInputType}`;
-          }
-
-        } else {
-          throw 'Both documentInput and documentInputType must be set up or left undefined.';
-        }
+        // if (this.#_documentInput === undefined && this.#_documentInputType === undefined) {
+        //
+        //   if (this.#_documentPath === undefined) {
+        //     throw "document path must be set up!"
+        //   }
+        //
+        //   if (this.#_documentPath.slice(-4) === 'yaml' || this.#_documentPath.slice(-4) === '.yml') {
+        //     this.#_parser = spectralParsers.Yaml;
+        //   } else if (this.#_documentPath.slice(-4) === 'json') {
+        //     this.#_parser = spectralParsers.Json;
+        //   } else {
+        //     throw `Cannot determine file type! Actual filepath is: ${this.#_documentPath}`;
+        //   }
+        //
+        // } else if (this.#_documentInput !== undefined && this.#_documentInputType !== undefined) {
+        //   // when document input and document input type are not undefined
+        //   // then we work with a provided inline document
+        //
+        //   if (this.#_documentInputType === 'json') {
+        //     this.#_parser = spectralParsers.Json;
+        //   } else if (this.#_documentInputType === 'yaml' || this.#_documentInputType === 'yml') {
+        //     this.#_parser = spectralParsers.Yaml;
+        //   } else {
+        //     throw `Document input type must be either 'json', 'yaml' or 'yml'. Actual value ${this.#_documentInputType}`;
+        //   }
+        //
+        // } else {
+        //   throw 'Both documentInput and documentInputType must be set up or left undefined.';
+        // }
 
         return new OpenApiValidator(this);
       }

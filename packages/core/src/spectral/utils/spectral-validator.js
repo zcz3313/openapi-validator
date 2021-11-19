@@ -100,7 +100,7 @@ const setup = async function(openApiValidatorBuilder, providedRulesetFile, confi
     //   source: providedRulesetFile
     // });
     // ruleset = await mergeRulesets(defaultRuleset, loadedRulesetFromExternalSources, true);
-    const defRuleset = new Ruleset(defaultRuleset);
+    // const defRuleset = new Ruleset(defaultRuleset);
     // ruleset = loadedRulesetFromExternalSources;
     // ruleset = await mergeRulesets(defRuleset, loadedRuleset, true);
   
