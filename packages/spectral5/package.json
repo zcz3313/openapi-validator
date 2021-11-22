@@ -1,0 +1,27 @@
+{
+  "name": "spectral5",
+  "version": "1.0.0",
+  "description": "IBM specific Spectral rules tested with Spectral 5 in order to have a clear picture about diff between Spectral 5 and 6 behaviour.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest __test__"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@stoplight/spectral": "^5.9.2",
+    "@stoplight/spectral-formats": "^1.0.1",
+    "jest": "^27.3.1",
+    "nimma": "^0.1.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "modulePathIgnorePatterns": [
+      "__helpers__"
+    ],
+    "moduleNameMapper": {
+      "^nimma/fallbacks$": "<rootDir>/node_modules/nimma/dist/cjs/fallbacks/index.js",
+      "^nimma/legacy$": "<rootDir>/node_modules/nimma/dist/legacy/cjs/index.js"
+    }
+  }
+}
