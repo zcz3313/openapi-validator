@@ -5,7 +5,7 @@ class ContentEntryContainsSchemaRule {
   static ruleName = 'content-entry-contains-schema';
   static rule = {
     description: 'Content entries must specify a schema',
-    message: '{{error}}',
+    message: '{{description}}',
     formats: [oas3],
     given: [
       '$.paths[*].[post,put,patch].requestBody.content[*]',

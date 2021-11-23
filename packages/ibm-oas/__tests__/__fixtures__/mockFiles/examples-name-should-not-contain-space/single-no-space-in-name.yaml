@@ -6,7 +6,7 @@ info:
 servers:
   - url: 'https://example.com'
 paths:
-  '/v1/users':
+  /v1/users:
     get:
       operationId: get_users
       summary: returns user list
@@ -20,6 +20,6 @@ paths:
                   id:
                     type: string
               examples:
-                success example:
+                success:
                   summary: 'successful example'
                   value: 'success value'

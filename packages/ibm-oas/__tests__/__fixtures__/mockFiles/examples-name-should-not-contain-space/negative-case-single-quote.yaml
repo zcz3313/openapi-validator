@@ -20,6 +20,6 @@ paths:
                   id:
                     type: string
               examples:
-                success example:
+                'success example':
                   summary: 'successful example'
                   value: 'success value'

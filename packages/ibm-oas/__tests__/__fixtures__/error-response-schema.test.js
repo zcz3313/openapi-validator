@@ -1,5 +1,8 @@
 const SpectralTestWrapper = require('../__utils__/spectral-test-wrapper');
 const prepareASingleRuleForLoad = require('../__helpers__/prepare-a-single-rule-for-load');
+
+// it seems this test has meaning in the environment where all the rules are loaded
+
 describe('spectral - test error-response validation does not produce false positives', function() {
   let res;
   let spectralTestWrapper;

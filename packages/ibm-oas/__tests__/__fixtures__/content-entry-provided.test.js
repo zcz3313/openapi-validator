@@ -15,7 +15,7 @@ describe('spectral - test content entry validation does not produce false positi
     spectralTestWrapper.resetDocumentToBeValidated();
   });
   
-  it('should not error when content object provided or for 101, 202, 204 response without content', async () => {
+  test('should not error when content object provided or for 101, 202, 204 response without content', async () => {
     const spec = {
       openapi: '3.0.0',
       info: {
@@ -70,20 +70,17 @@ describe('spectral - test content entry validation does not produce false positi
     };
     
     spectralTestWrapper.setInMemoryContent(spec);
-    const result = await spectralTestWrapper.validate();
+    const res = await spectralTestWrapper.validate();
     
-    // const res = await inCodeValidator(spec, true);
-    // const expectedWarnings = res.warnings.filter(
-    //   warn =>
-    //     warn.message ===
-    //     'Request bodies and non-204 responses should define a content object'
-    // );
-    // expect(expectedWarnings.length).toBe(0);
+    const expectedWarnings = res.filter(
+      warn =>
+        warn.message ===
+        'Request bodies and non-204 responses should define a content object'
+    );
+    expect(expectedWarnings.length).toBe(0);
   });
-});
 
-describe('spectral - test content entry validation does not produce false positives', function() {
-  it('should error when content object not provided', async () => {
+  test('should error when content object not provided', async () => {
     const spec = {
       openapi: '3.0.0',
       info: {
@@ -106,12 +103,60 @@ describe('spectral - test content entry validation does not produce false positi
       }
     };
 
-    const res = await inCodeValidator(spec, true);
-    const expectedWarnings = res.warnings.filter(
+    spectralTestWrapper.setInMemoryContent(spec);
+    const res = await spectralTestWrapper.validate();
+    
+    const expectedWarnings = res.filter(
       warn =>
         warn.message ===
         'Request bodies and non-204 responses should define a content object'
     );
     expect(expectedWarnings.length).toBe(5);
   });
+  
+  test('should error when content object not provided - multiple cases', async () => {
+    const spec = {
+      openapi: '3.0.0',
+      info: {
+        version: '1.0.0',
+        title: 'ErrorAPI'
+      },
+      servers: [{ url: 'http://api.errorapi.com/v1' }],
+      paths: {
+        path1: {
+          post: {
+            requestBody: {},
+            responses: {
+              '200': {},
+              '300': {},
+              '400': {},
+              '500': {}
+            }
+          }
+        },
+        path2: {
+          post: {
+            requestBody: {},
+            responses: {
+              '200': {},
+              '300': {},
+              '400': {},
+              '500': {}
+            }
+          }
+        }
+      }
+    };
+    
+    spectralTestWrapper.setInMemoryContent(spec);
+    const res = await spectralTestWrapper.validate();
+    
+    const expectedWarnings = res.filter(
+      warn =>
+        warn.message ===
+        'Request bodies and non-204 responses should define a content object'
+    );
+    expect(expectedWarnings.length).toBe(10);
+  });
+  
 });

@@ -23,7 +23,9 @@ paths:
                 success:
                   summary: 'successful example'
                   value: 'success value'
-                fail:
-                  summary: 'failed request'
-                  value: 'failed request value'
-
+                success2:
+                  summary: 'successful example'
+                  value: 'success value'
+                success3:
+                  summary: 'successful example'
+                  value: 'success value'
